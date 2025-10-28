@@ -1,6 +1,74 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-:root {
+@theme inline {
+  --font-display: var(--font-bebas-neue);
+  --font-sans: var(--font-poppins);
+
+  /* 🎨 Colors */
+  --color-black: #212529;
+  --color-white: #f8f9fa;
+
+  /* Primary */
+  --color-primary-100: #fce5ee;
+  --color-primary-200: #facadd;
+  --color-primary-300: #f7b0cb;
+  --color-primary-400: #f595ba;
+  --color-primary-500: #f27ba9;
+  --color-primary-600: #ce648d;
+  --color-primary-700: #aa4c71;
+  --color-primary-800: #873554;
+  --color-primary-850: #752946;
+  --color-primary-900: #631d38;
+  --color-primary-950: #51122a;
+  --color-primary-dark: #3f061c;
+
+  /* Secondary */
+  --color-secondary-100: #d9f6fb;
+  --color-secondary-200: #7be4f2;
+  --color-secondary-300: #63bac6;
+  --color-secondary-400: #4c929b;
+  --color-secondary-500: #376b72;
+  --color-secondary-600: #22474c;
+  --color-secondary-700: #102629;
+  --color-secondary-light: #d9f6fb;
+  --color-secondary-dark: #102629;
+
+  /* Neutral */
+  --color-neutral-100: #f8f9fa;
+  --color-neutral-200: #e9ecef;
+  --color-neutral-300: #dee2e6;
+  --color-neutral-400: #ced4da;
+  --color-neutral-500: #adb5bd;
+  --color-neutral-600: #6c757d;
+  --color-neutral-700: #495057;
+  --color-neutral-800: #343a40;
+  --color-neutral-900: #212529;
+
+  /* 🖋 Fonts */
+  --font-display: var(--font-bebas-neue);
+  --font-sans: var(--font-poppins);
+}
+
+h1,
+h2 {
+  font-family: var(--font-display);
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-sans);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: var(--color-black);
+    background-color: var(--color-white);
+  }
+}
+
+/* :root {
   --background: #ffffff;
   --foreground: #171717;
 }
@@ -23,4 +91,12 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+} */
+
+.hide-scrollbar {
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
 }
