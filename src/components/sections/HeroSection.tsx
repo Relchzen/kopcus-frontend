@@ -42,13 +42,17 @@ export default function HeroSection({}: Props) {
         </p>
 
         <div className="justfy-center flex flex-wrap justify-center gap-4 md:justify-start">
-          <Button size={'responsive'} href="#contact">
-            <span className="font-bold">Get in Touch</span>
+          <Button size={'responsive-sm'} href="#contact">
+            <span className="font-medium md:font-semibold lg:font-bold">
+              Get in Touch
+            </span>
             <LiaLongArrowAltRightSolid className="ml-2 h-5 w-5 md:h-6 md:w-6" />
           </Button>
 
-          <Button size={'responsive'} variant="outline" href="#portfolio">
-            <span className="font-bold">View Our Work</span>
+          <Button size={'responsive-sm'} variant="outline" href="#portfolio">
+            <span className="font-medium md:font-semibold lg:font-bold">
+              View Our Work
+            </span>
           </Button>
         </div>
 
