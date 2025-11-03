@@ -2,18 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Navbar } from '@/components/Navbar';
 import { poppins, bebasNeue, montserrat } from '@/lib/fonts';
-// import { Geist, Geist_Mono, Poppins } from 'next/font/google';
+import { SmoothScrolling } from '@/utils/SmoothScrolling';
 import './globals.css';
-
-// const geistSans = Geist({
-//   variable: '--font-geist-sans',
-//   subsets: ['latin'],
-// });
-
-// const geistMono = Geist_Mono({
-//   variable: '--font-geist-mono',
-//   subsets: ['latin'],
-// });
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -28,9 +18,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${poppins.variable} ${montserrat.variable} ${bebasNeue.variable} bg-[#F8F9FA] pt-24`}
+      className={`${poppins.variable} ${montserrat.variable} ${bebasNeue.variable} bg-white pt-24`}
     >
-      <body>{children}</body>
+      <SmoothScrolling />
+      <body className="flex min-h-screen justify-center">
+        <div className="container">{children}</div>
+      </body>
     </html>
   );
 }
