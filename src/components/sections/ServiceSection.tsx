@@ -1,12 +1,13 @@
 'use client';
 import React from 'react';
-import { SectionHeader } from '@/components/SectionHeader';
+import { SectionHeading } from '@/components/ui/SectionHeading';
 import { SectionContainer } from '../SectionContainer';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { SwipeableImageStack } from '@/components/SwipableImageStack';
-import { PiArrowUpRightLight } from 'react-icons/pi';
+import { PiArrowDownLight, PiArrowRightLight } from 'react-icons/pi';
+import { Button } from '../ui/Button';
 
 type Props = {};
 
@@ -61,6 +62,11 @@ export default function ServiceSection({}: Props) {
   const [selectedService, setSelectedService] = React.useState(services[0]);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [direction, setDirection] = useState(0);
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  const toggleAccordion = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
 
   const handleServiceHover = (service: (typeof services)[0], index: number) => {
     const newDirection = index > selectedIndex ? 1 : -1;
@@ -101,15 +107,116 @@ export default function ServiceSection({}: Props) {
   return (
     <SectionContainer
       name="services"
-      className="bg-primary-500 gap-4 pt-18 text-white"
+      className="section-padding relative gap-8 py-18 text-black md:flex"
     >
-      <SectionHeader
-        sectionName="Our Services"
-        firstHeadline="Where passion"
-        secondHeadline="meets promotion."
-        secondHeadlineColor="text-white"
-      />
       <div
+        id="service-section-header"
+        className="top-0 mb-8 flex flex-col gap-4 self-start md:sticky md:w-2/5"
+      >
+        <SectionHeading sectionName="Services" id="service-heading" />
+        <h3
+          id="service-subheading"
+          className="text-3xl font-semibold tracking-tighter md:text-4xl lg:text-5xl"
+        >
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        </h3>
+        <p
+          id="service-text"
+          className="text-sm font-light md:text-lg lg:text-2xl"
+        >
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec congue
+          non nunc nec dapibus. Suspendisse bibendum urna a nibh iaculis, at
+          eleifend metus finibus.
+        </p>
+        <div className="service-buttons hidden gap-6 md:flex">
+          <Button size={'responsive'}>
+            <p className="font-medium">Call Button</p>
+          </Button>
+          <Button variant={'outline'} size={'responsive'}>
+            <p className="font-medium">More details</p>
+          </Button>
+        </div>
+      </div>
+      <div className="md:flex-3" id="service-details-container">
+        {services.map((service, index) => {
+          const isOpen = openIndex === index;
+          return (
+            <div
+              key={index}
+              className={`mb-4 overflow-hidden rounded-2xl transition-all duration-300 ${
+                isOpen ? 'bg-white' : 'bg-neutral-150'
+              }`}
+            >
+              {/* Accordion Header */}
+              <button
+                onClick={() => toggleAccordion(index)}
+                className={`flex w-full items-center justify-between p-2 text-left transition-colors hover:cursor-pointer md:p-4 lg:p-8 ${
+                  isOpen ? 'hover:bg-neutral-50' : 'hover:bg-neutral-200'
+                }`}
+              >
+                <h4 className="text-lg font-medium md:text-2xl lg:text-4xl">
+                  {service.name}
+                </h4>
+                <div className="p-4">
+                  <PiArrowDownLight
+                    className={`h-6 w-6 text-black transition-transform duration-300 md:h-8 md:w-8 lg:h-10 lg:w-10 ${
+                      isOpen ? 'rotate-180' : ''
+                    }`}
+                  />
+                </div>
+              </button>
+
+              {/* Accordion Content */}
+              <div
+                className={`grid transition-all duration-300 ease-in-out ${
+                  isOpen
+                    ? 'grid-rows-[1fr] opacity-100'
+                    : 'grid-rows-[0fr] opacity-0'
+                }`}
+              >
+                <div className="overflow-hidden">
+                  <div className="px-4 pb-6">
+                    {/* Description */}
+                    <p className="mb-6 text-xs leading-relaxed text-neutral-700 md:text-lg">
+                      {service.description}
+                    </p>
+
+                    {/* Images Grid */}
+                    <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                      {service.images.map((image, imgIndex) => (
+                        <div
+                          key={imgIndex}
+                          className="overflow-hidden rounded-lg"
+                        >
+                          <img
+                            src={image}
+                            alt={`${service.name} ${imgIndex + 1}`}
+                            className="h-full w-full object-cover duration-300"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div className="service-buttons flex justify-center gap-6 md:hidden">
+        <Button size={'sm'}>
+          <p className="font-medium">Call Button</p>
+        </Button>
+        <Button variant={'outline'} size={'sm'}>
+          <p className="font-medium">More details</p>
+        </Button>
+      </div>
+    </SectionContainer>
+  );
+}
+
+{
+  /* <div
         id="section-content"
         className="bg-primary-500 relative z-20 flex min-h-screen justify-between gap-16 overflow-hidden px-4 pt-8 pb-16"
       >
@@ -126,8 +233,10 @@ export default function ServiceSection({}: Props) {
               </div>
             ))}
           </div>
-        </div>
-        <div id="service-details" className="mr-8 flex w-1/2 flex-col">
+        </div> */
+}
+{
+  /* <div id="service-details" className="mr-8 flex w-1/2 flex-col">
           <AnimatePresence mode="wait" initial={false} custom={direction}>
             <motion.div
               key={selectedService.name}
@@ -145,8 +254,5 @@ export default function ServiceSection({}: Props) {
               </p>
             </motion.div>
           </AnimatePresence>
-        </div>
-      </div>
-    </SectionContainer>
-  );
+        </div> */
 }

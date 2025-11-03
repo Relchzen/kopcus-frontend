@@ -11,10 +11,10 @@ export const SectionHeading = (props: Props) => {
   return (
     <div
       id={id}
-      className="text-md inline-flex w-fit items-center gap-2 rounded-full border-2 border-neutral-200/60 bg-neutral-200/20 px-4 py-1.5 font-semibold text-black backdrop-blur-sm md:mb-6"
+      className="mb-3 inline-flex w-fit items-center gap-2 rounded-full border-2 border-neutral-200/60 bg-neutral-200/20 px-4 py-1.5 font-semibold text-black backdrop-blur-sm md:mb-6"
     >
       <span className="bg-primary-400 h-1.5 w-1.5 rounded-full"></span>
-      <h2>{sectionName}</h2>
+      <h2 className="md:text-md text-xs">{sectionName}</h2>
     </div>
   );
 };

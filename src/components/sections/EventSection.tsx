@@ -113,7 +113,7 @@ export default function EventSection({}: Props) {
       {/* === Section Header === */}
       <div
         id="events-section-header"
-        className="relative z-10 mb-32 flex flex-col items-center px-6 py-4 text-center md:py-8 lg:py-12"
+        className="relative z-10 flex flex-col items-center px-6 py-4 text-center md:py-8 lg:py-12"
       >
         {/* Badge */}
         <SectionHeading sectionName="Events" id="event-heading" />
@@ -122,18 +122,22 @@ export default function EventSection({}: Props) {
       {/* === Section Content === */}
       <div
         id="events-section-content"
-        className="relative z-20 flex w-full flex-col items-start justify-between gap-8 self-end pb-8 pl-4 md:pl-8 lg:flex-row lg:pl-12"
+        className="relative z-20 flex w-full flex-row items-start justify-between gap-8 self-end pl-4 lg:pb-8 lg:pl-12"
       >
         {/* === Event Details Card === */}
         <div
           id="event-details"
-          className="mb-12 rounded-3xl border border-white/20 bg-white/10 p-6 text-white drop-shadow-2xl backdrop-blur-md lg:mb-0 lg:w-2/5"
+          className="mb-6 w-2/5 rounded-3xl border border-white/20 bg-white/10 p-3 text-white drop-shadow-2xl backdrop-blur-md lg:mb-12 lg:p-6"
         >
           <div className="mb-8 flex flex-col gap-2">
-            <p className="text-5xl font-bold">Artist Name</p>
-            <h3 className="text-3xl font-semibold">Event Title</h3>
-            <p className="text-2xl font-medium">Location, Date Time</p>
-            <p className="text-lg leading-relaxed text-white/90">
+            <p className="font-bold md:text-3xl lg:text-5xl">Artist Name</p>
+            <h3 className="font-semibold md:text-xl lg:text-3xl">
+              Event Title
+            </h3>
+            <p className="font-medium md:text-lg lg:text-2xl">
+              Location, Date Time
+            </p>
+            <p className="leading-relaxed text-white/90 md:text-xs lg:text-lg">
               BRIIZE in Indonesia — it’s your turn to experience one of K-pop’s
               most anticipated new acts live in Jakarta. Don’t miss this — let’s
               RIIZE LOUD together!
@@ -151,16 +155,16 @@ export default function EventSection({}: Props) {
         {/* === Event Carousel === */}
         <div
           id="event-list-container"
-          className="flex flex-col justify-end lg:w-3/5"
+          className="flex w-3/5 flex-col justify-end"
         >
           <div
             id="event-list"
-            className="scrollbar-hide flex snap-x snap-mandatory gap-4 overflow-x-auto py-8"
+            className="scrollbar-hide flex snap-x snap-mandatory gap-2 overflow-x-auto py-4 lg:gap-4 lg:py-8"
           >
             {events.map((event) => (
               <div
                 key={event.id}
-                className="event-card flex aspect-[3/4] w-60 flex-shrink-0 cursor-pointer snap-start items-end rounded-[16px] drop-shadow-lg transition-transform hover:scale-105"
+                className="event-card flex aspect-[3/4] w-40 flex-shrink-0 cursor-pointer snap-start items-end rounded-[8px] drop-shadow-lg transition-transform hover:scale-105 lg:w-60 lg:rounded-[16px]"
                 style={{
                   backgroundImage: `url(${event.image})`,
                   backgroundSize: 'cover',
@@ -176,7 +180,7 @@ export default function EventSection({}: Props) {
           </div>
 
           {/* === Navigation Buttons + Progress === */}
-          <div className="mt-6 flex items-center gap-3">
+          <div className="mt-2 flex items-center gap-3 lg:mt-6">
             <button
               onClick={() => {
                 const container = document.getElementById('event-list');
