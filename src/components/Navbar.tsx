@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaInstagram } from 'react-icons/fa';
-import { TransparentPopUpButton } from './Button';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from './ui/Button';
 

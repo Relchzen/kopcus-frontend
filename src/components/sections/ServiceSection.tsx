@@ -111,7 +111,7 @@ export default function ServiceSection({}: Props) {
     >
       <div
         id="service-section-header"
-        className="top-0 mb-8 flex flex-col gap-4 self-start md:sticky md:w-2/5"
+        className="top-0 mb-8 flex flex-col gap-4 self-start px-2 md:sticky md:w-2/5 md:px-0"
       >
         <SectionHeading sectionName="Services" id="service-heading" />
         <h3

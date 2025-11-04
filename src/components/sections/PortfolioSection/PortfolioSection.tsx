@@ -48,7 +48,7 @@ export default function PortfolioSection({}: Props) {
     <SectionContainer name="portfolio" className="section-margin mt-16 pt-8">
       <div
         id="portfolio-section-header"
-        className="flex flex-col justify-between md:mb-4 md:flex-row md:items-end lg:mb-8"
+        className="flex flex-col justify-between px-2 md:mb-4 md:flex-row md:items-end md:px-0 lg:mb-8"
       >
         <div className="md:max-w-1/3">
           <SectionHeading sectionName="Portfolio" id="portfolio-heading" />
