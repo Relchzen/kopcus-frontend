@@ -122,7 +122,7 @@ export default function EventSection({}: Props) {
       {/* === Section Content === */}
       <div
         id="events-section-content"
-        className="relative z-20 flex w-full flex-row items-start justify-between gap-8 self-end pl-4 lg:pb-8 lg:pl-12"
+        className="relative z-20 flex w-full flex-row items-end justify-between gap-8 self-end pl-4 lg:pb-8 lg:pl-12"
       >
         {/* === Event Details Card === */}
         <div
@@ -130,14 +130,14 @@ export default function EventSection({}: Props) {
           className="mb-6 w-2/5 rounded-3xl border border-white/20 bg-white/10 p-3 text-white drop-shadow-2xl backdrop-blur-md lg:mb-12 lg:p-6"
         >
           <div className="mb-8 flex flex-col gap-2">
-            <p className="font-bold md:text-3xl lg:text-5xl">Artist Name</p>
-            <h3 className="font-semibold md:text-xl lg:text-3xl">
+            <p className="font-bold md:text-2xl lg:text-4xl">Artist Name</p>
+            <h3 className="font-semibold md:text-xl lg:text-2xl">
               Event Title
             </h3>
-            <p className="font-medium md:text-lg lg:text-2xl">
+            <p className="md:text-md font-medium lg:text-xl">
               Location, Date Time
             </p>
-            <p className="leading-relaxed text-white/90 md:text-xs lg:text-lg">
+            <p className="lg:text-md leading-relaxed text-white/90 md:text-sm">
               BRIIZE in Indonesia — it’s your turn to experience one of K-pop’s
               most anticipated new acts live in Jakarta. Don’t miss this — let’s
               RIIZE LOUD together!
@@ -145,7 +145,7 @@ export default function EventSection({}: Props) {
           </div>
 
           <Button
-            size="responsive"
+            size="responsive-sm"
             className="bg-primary-500 hover:bg-primary-600"
           >
             <p className="font-semibold tracking-wide">Get Ticket</p>
@@ -157,25 +157,24 @@ export default function EventSection({}: Props) {
           id="event-list-container"
           className="flex w-3/5 flex-col justify-end"
         >
+          <Button variant={'secondary'} size={'sm'} className="mr-8 ml-auto">
+            <p className="font-semibold">More events</p>
+          </Button>
           <div
             id="event-list"
-            className="scrollbar-hide flex snap-x snap-mandatory gap-2 overflow-x-auto py-4 lg:gap-4 lg:py-8"
+            className="scrollbar-hide flex snap-x snap-mandatory gap-2 overflow-x-auto px-8 py-4"
           >
             {events.map((event) => (
               <div
                 key={event.id}
-                className="event-card flex aspect-[3/4] w-40 flex-shrink-0 cursor-pointer snap-start items-end rounded-[8px] drop-shadow-lg transition-transform hover:scale-105 lg:w-60 lg:rounded-[16px]"
+                className="event-card flex aspect-[3/4] w-40 flex-shrink-0 scale-95 cursor-pointer snap-start items-end rounded-[8px] drop-shadow-lg transition-transform hover:scale-100 lg:w-60 lg:rounded-[16px]"
                 style={{
                   backgroundImage: `url(${event.image})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                 }}
                 onClick={() => console.log('Open event:', event.id)}
-              >
-                <div className="m-1 w-full rounded-[12px] bg-white p-2 text-black">
-                  Test
-                </div>
-              </div>
+              ></div>
             ))}
           </div>
 
@@ -203,7 +202,6 @@ export default function EventSection({}: Props) {
                 />
               </svg>
             </button>
-
             <button
               onClick={() => {
                 const container = document.getElementById('event-list');
@@ -226,7 +224,6 @@ export default function EventSection({}: Props) {
                 />
               </svg>
             </button>
-
             <div className="h-1 w-32 rounded-full bg-white/30">
               <div
                 id="scroll-progress"

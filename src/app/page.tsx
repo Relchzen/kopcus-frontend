@@ -8,6 +8,7 @@ import TestimonialSection from '@/components/sections/TestimonialSection';
 import ContactSection from '@/components/sections/ContactSection';
 import MobileEventSection from '@/components/sections/MobileEventSection';
 import { Footer } from '@/components/Footer';
+import { PortfolioData, PortfolioPost } from '@/types/portfolio';
 
 async function getHomeData() {
   const res = await fetch(
@@ -25,14 +26,40 @@ async function getHomeData() {
 export default async function Home() {
   const acf = await getHomeData();
 
-  console.log(acf);
-
   const heroData = Object.fromEntries(
     Object.entries(acf).filter(([key]) => key.startsWith('hero_'))
   );
   const aboutData = Object.fromEntries(
     Object.entries(acf).filter(([key]) => key.startsWith('about_'))
   );
+  // Extract portfolio section ACF from page
+  const portfolioSectionData = Object.fromEntries(
+    Object.entries(acf).filter(([key]) => key.startsWith('portfolio_'))
+  );
+
+  // Get portfolio post IDs
+  const portfolioIds = acf.portfolio_featured.map((post: any) => post.ID);
+
+  // Fetch all portfolio posts with their ACF data
+  const portfolioPostsWithACF: PortfolioPost[] = await Promise.all(
+    portfolioIds.map(async (postId: number): Promise<PortfolioPost> => {
+      const response = await fetch(
+        `https://kopichuseyo.com/wp-json/wp/v2/posts/${postId}`
+      );
+      if (!response.ok) {
+        throw new Error(`Failed to fetch post ${postId}`);
+      }
+      return await response.json();
+    })
+  );
+
+  // Combine everything for the Portfolio Section component
+  const portfolioData: PortfolioData = {
+    ...portfolioSectionData,
+    portfolio_featured: portfolioPostsWithACF,
+  } as PortfolioData;
+
+  console.log('Complete portfolio data:', portfolioData);
 
   return (
     <>
@@ -44,7 +71,7 @@ export default async function Home() {
         <EventSection />
         <MobileEventSection />
         <AboutSection data={aboutData} />
-        <PortfolioSection />
+        <PortfolioSection data={portfolioData} />
         <ServiceSection />
         <TestimonialSection />
         <ContactSection />

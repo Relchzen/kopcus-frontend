@@ -116,23 +116,20 @@ export default function ServiceSection({}: Props) {
         <SectionHeading sectionName="Services" id="service-heading" />
         <h3
           id="service-subheading"
-          className="text-3xl font-semibold tracking-tighter md:text-4xl lg:text-5xl"
+          className="text-lg font-semibold tracking-tighter md:text-2xl lg:text-4xl"
         >
           Lorem ipsum dolor sit amet, consectetur adipiscing elit.
         </h3>
-        <p
-          id="service-text"
-          className="text-sm font-light md:text-lg lg:text-2xl"
-        >
+        <p id="service-text" className="text-ms md:text-md lg:text-lg">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec congue
           non nunc nec dapibus. Suspendisse bibendum urna a nibh iaculis, at
           eleifend metus finibus.
         </p>
         <div className="service-buttons hidden gap-6 md:flex">
-          <Button size={'responsive'}>
+          <Button size={'responsive-sm'}>
             <p className="font-medium">Call Button</p>
           </Button>
-          <Button variant={'outline'} size={'responsive'}>
+          <Button variant={'outline'} size={'responsive-sm'}>
             <p className="font-medium">More details</p>
           </Button>
         </div>
@@ -144,17 +141,17 @@ export default function ServiceSection({}: Props) {
             <div
               key={index}
               className={`mb-4 overflow-hidden rounded-2xl transition-all duration-300 ${
-                isOpen ? 'bg-white' : 'bg-neutral-150'
+                isOpen ? 'bg-white' : 'bg-white'
               }`}
             >
               {/* Accordion Header */}
               <button
                 onClick={() => toggleAccordion(index)}
-                className={`flex w-full items-center justify-between p-2 text-left transition-colors hover:cursor-pointer md:p-4 lg:p-8 ${
-                  isOpen ? 'hover:bg-neutral-50' : 'hover:bg-neutral-200'
+                className={`flex w-full items-center justify-between p-2 text-left transition-colors hover:cursor-pointer md:p-3 lg:p-4 ${
+                  isOpen ? 'hover:bg-white' : 'hover:bg-neutral-200'
                 }`}
               >
-                <h4 className="text-lg font-medium md:text-2xl lg:text-4xl">
+                <h4 className="text-lg font-medium md:text-xl lg:text-2xl">
                   {service.name}
                 </h4>
                 <div className="p-4">
@@ -177,7 +174,7 @@ export default function ServiceSection({}: Props) {
                 <div className="overflow-hidden">
                   <div className="px-4 pb-6">
                     {/* Description */}
-                    <p className="mb-6 text-xs leading-relaxed text-neutral-700 md:text-lg">
+                    <p className="md:text-md mb-6 text-xs leading-relaxed text-neutral-700">
                       {service.description}
                     </p>
 
