@@ -5,67 +5,19 @@ import {
   AnimatePresence,
   useMotionValue,
   animate,
-} from 'framer-motion';
+} from 'motion/react';
 import { SectionContainer } from '../SectionContainer';
 import { SectionHeading } from '../ui/SectionHeading';
 import { Button } from '../ui/Button';
 import Image from 'next/image';
+import { Event } from '@/lib/events';
+import Link from 'next/link';
 
-interface EventItem {
-  id: number;
-  banner: string;
-  poster: string;
-  name: string;
-  artist: string;
-  location: string;
-  date: string;
-  status: string;
-  url: string;
-  description: string;
-}
+type Props = {
+  events: Event[];
+};
 
-export default function MobileEventSection() {
-  const events: EventItem[] = [
-    {
-      id: 1,
-      banner: '/riize-banner.png',
-      poster: '/PlayWithPagaehun.jpg',
-      name: 'Riize Rise Up and Realize Tour in Jakarta',
-      artist: 'RIIZE',
-      location: 'Jakarta, Indonesia',
-      date: '15 January 2026',
-      status: 'Available',
-      url: '/events/riize-rise-up',
-      description:
-        'BRIIZE in Indonesia — it’s your turn to experience one of K-pop’s most anticipated new acts live in Jakarta. Don’t miss this — let’s RIIZE LOUD together!',
-    },
-    {
-      id: 2,
-      banner: '/riize-banner.png',
-      poster: '/PlayWithPagaehun.jpg',
-      name: 'Play with Pagaehun in Bali',
-      artist: 'Pagaehun',
-      location: 'Bali, Indonesia',
-      date: '5 February 2026',
-      status: 'Coming Soon',
-      url: '/events/pagaehun-bali',
-      description:
-        'Experience an intimate live show with Pagaehun surrounded by the tropical vibe of Bali!',
-    },
-    {
-      id: 3,
-      banner: '/riize-banner.png',
-      poster: '/PlayWithPagaehun.jpg',
-      name: 'Event 3',
-      artist: 'Artist 3',
-      location: 'Surabaya, Indonesia',
-      date: '28 February 2026',
-      status: 'Sold Out',
-      url: '/events/event-3',
-      description:
-        'A fully sold-out show that captured the hearts of fans across Indonesia.',
-    },
-  ];
+export default function MobileEventSection({ events }: Props) {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const outerRef = useRef<HTMLDivElement | null>(null);
   const innerRef = useRef<HTMLDivElement | null>(null);
@@ -73,10 +25,14 @@ export default function MobileEventSection() {
   const isDragging = useRef(false);
 
   // Duplicate items for infinite scroll
-  const duplicatedEvents = [...events, ...events, ...events];
+  // Only duplicate if we have more than 1 event
+  const duplicatedEvents = events.length > 1 ? [...events, ...events, ...events] : events;
   const totalItems = events.length;
+  const isInfinite = events.length > 1;
 
   useEffect(() => {
+    if (!isInfinite) return;
+
     // Set initial position to show the middle set of items
     const outer = outerRef.current;
     const inner = innerRef.current;
@@ -86,11 +42,12 @@ export default function MobileEventSection() {
     if (cards.length === 0) return;
 
     // Position at the start of the second set (middle)
+    // We need to wait for render to get correct offsets, but this runs after render
     const initialOffset =
       cards[totalItems].offsetLeft -
       (outer.offsetWidth / 2 - cards[totalItems].offsetWidth / 2);
     x.set(-initialOffset);
-  }, [events]);
+  }, [events, totalItems, x, isInfinite]);
 
   const handleSnap = () => {
     const outer = outerRef.current;
@@ -127,7 +84,9 @@ export default function MobileEventSection() {
       damping: 28,
     }).then(() => {
       // After animation, check if we need to loop
-      handleInfiniteLoop(closestIndex);
+      if (isInfinite) {
+        handleInfiniteLoop(closestIndex);
+      }
     });
 
     // Update selected index to the logical position
@@ -164,7 +123,9 @@ export default function MobileEventSection() {
       damping: 28,
     }).then(() => {
       // After animation, check if we need to loop
-      handleInfiniteLoop(clickedIndex);
+      if (isInfinite) {
+        handleInfiniteLoop(clickedIndex);
+      }
     });
 
     // Update selected index to the logical position
@@ -172,6 +133,8 @@ export default function MobileEventSection() {
   };
 
   const handleInfiniteLoop = (snappedIndex: number) => {
+    if (!isInfinite) return;
+    
     const outer = outerRef.current;
     const inner = innerRef.current;
     if (!outer || !inner) return;
@@ -202,6 +165,10 @@ export default function MobileEventSection() {
     }
   };
 
+  if (!events || events.length === 0) {
+    return null;
+  }
+
   return (
     <SectionContainer
       name="events"
@@ -219,9 +186,11 @@ export default function MobileEventSection() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4 }}
         >
-          <img
-            src={events[selectedIndex]?.banner}
-            alt={events[selectedIndex]?.name}
+          <Image
+            src={events[selectedIndex]?.bannerUrl || '/riize-banner.png'}
+            alt={events[selectedIndex]?.title}
+            width={800}
+            height={450}
             draggable={false}
             className="h-auto w-full object-cover"
           />
@@ -233,7 +202,18 @@ export default function MobileEventSection() {
         <motion.div
           ref={innerRef}
           drag="x"
-          dragConstraints={{ left: -Infinity, right: Infinity }}
+          dragConstraints={isInfinite ? { left: -Infinity, right: Infinity } : { left: 0, right: 0 }} // Disable drag constraints if not infinite? Or maybe just limit it.
+          // Better to allow drag but with bounds if not infinite, but for single item, maybe no drag needed?
+          // If single item, we can just center it and disable drag or make it spring back.
+          // Let's keep it simple: if single item, dragConstraints might need adjustment or just disable drag if we want.
+          // But user asked "don't make it infinite loop".
+          // If 1 item, dragConstraints should probably prevent moving too far or just center it.
+          // Let's try to center it by default and maybe allow small drag with spring back.
+          // For now, let's set constraints to keep it in view if not infinite.
+          // Actually, if 1 item, we might not need drag at all.
+          // Let's use left/right constraints based on content width if not infinite.
+          // For single item, it's centered.
+          
           dragElastic={0.05}
           style={{ x }}
           whileTap={{ cursor: 'grabbing' }}
@@ -247,17 +227,17 @@ export default function MobileEventSection() {
               isDragging.current = false;
             }, 100);
           }}
-          className="scrollbar-hide flex w-max cursor-grab gap-4 active:cursor-grabbing"
+          className={`scrollbar-hide flex w-max cursor-grab gap-4 active:cursor-grabbing ${!isInfinite ? 'justify-center' : ''}`}
         >
           {duplicatedEvents.map((event, index) => (
             <motion.div
-              key={`${index}-${event.name}`}
+              key={`${index}-${event.title}`}
               className="relative flex aspect-[4/5] w-[80dvw] flex-shrink-0 snap-center items-center justify-center overflow-hidden rounded-2xl bg-neutral-200 text-lg font-bold"
               onClick={() => handleCardClick(index)}
             >
               <Image
-                src={event.poster}
-                alt={event.name}
+                src={event.posterUrl}
+                alt={event.title}
                 fill
                 className="object-cover"
                 priority={index < totalItems * 2 && index >= totalItems} // Prioritize middle set
@@ -271,21 +251,23 @@ export default function MobileEventSection() {
       {/* === Event Details === */}
       <div className="mt-2 flex flex-col gap-2 px-6 text-center text-black">
         <p className="text-2xl font-bold">{events[selectedIndex].artist}</p>
-        <h3 className="text-xl font-semibold">{events[selectedIndex].name}</h3>
+        <h3 className="text-xl font-semibold">{events[selectedIndex].title}</h3>
         <p className="text-sm text-black/80">
-          {events[selectedIndex].location} — {events[selectedIndex].date}
+          {events[selectedIndex].location} — {new Date(events[selectedIndex].startAt).toLocaleDateString()}
         </p>
 
-        <Button
-          size="responsive"
-          className="bg-primary-500 hover:bg-primary-600 mt-4"
-        >
-          <p className="font-semibold tracking-wide">
-            {events[selectedIndex].status === 'Available'
-              ? 'Get Ticket'
-              : events[selectedIndex].status}
-          </p>
-        </Button>
+        <Link href={`/events/${events[selectedIndex].slug}`} className="w-full">
+          <Button
+            size="responsive"
+            className="bg-primary-500 hover:bg-primary-600 mt-4 w-full"
+          >
+            <p className="font-semibold tracking-wide">
+              {events[selectedIndex].status === 'Available'
+                ? 'Get Ticket'
+                : events[selectedIndex].status}
+            </p>
+          </Button>
+        </Link>
       </div>
     </SectionContainer>
   );

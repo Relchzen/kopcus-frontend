@@ -1,8 +1,8 @@
 import React from 'react';
 import Image from 'next/image';
-import { PopUpButton } from './Button';
+
 import Link from 'next/link';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'motion/react';
 import { useRef } from 'react';
 
 type Props = {
@@ -11,13 +11,13 @@ type Props = {
   artist: string;
   location: string;
   date: string;
-  status: string;
+
   eventUrl: string;
   index: number;
 };
 
 export const EventCard = (props: Props) => {
-  const { name, imageUrl, artist, location, date, status, eventUrl, index } =
+  const { name, imageUrl, artist, location, date, eventUrl, index } =
     props;
   const cardRef = useRef<HTMLAnchorElement>(null);
 
@@ -41,23 +41,7 @@ export const EventCard = (props: Props) => {
     [0, 1, 1]
   );
 
-  let statusText;
-  switch (status) {
-    case 'Available':
-      statusText = 'Buy Ticket';
-      break;
-    case 'Coming Soon':
-      statusText = 'Soon';
-      break;
-    case 'Sold Out':
-      statusText = 'Sold Out';
-      break;
-    case 'Ended':
-      statusText = 'Ended';
-    default:
-      statusText = 'Unavailable';
-      break;
-  }
+
   const MotionLink = motion(Link);
 
   return (

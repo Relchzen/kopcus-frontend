@@ -1,6 +1,5 @@
 'use client';
-import Lenis from 'lenis';
-import { ReactLenis, useLenis } from 'lenis/react';
+import { ReactLenis } from 'lenis/react';
 
 export function SmoothScrolling() {
   //   const Lenis = useLenis((lenis) => {

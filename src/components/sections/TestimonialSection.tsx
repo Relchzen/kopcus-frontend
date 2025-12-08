@@ -1,10 +1,9 @@
+"use client"
 import React from 'react';
 import { SectionContainer } from '../SectionContainer';
 import { SectionHeading } from '../ui/SectionHeading';
 
-type Props = {};
-
-export default function TestimonialSection({}: Props) {
+export default function TestimonialSection() {
   return (
     <SectionContainer
       name="testimonial"
