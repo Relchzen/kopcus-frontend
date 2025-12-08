@@ -1,6 +1,6 @@
 'use client';
 import React, { ReactNode, useRef, useEffect, useState } from 'react';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
+import { motion, useMotionValue, useTransform } from 'motion/react';
 
 type HorizontalScrollerProps = {
   children: ReactNode;

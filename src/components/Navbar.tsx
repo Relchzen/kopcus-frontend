@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaInstagram } from 'react-icons/fa';
-import { TransparentPopUpButton } from './Button';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from './ui/Button';
 
@@ -74,19 +73,25 @@ export const Navbar = () => {
         <Link href="/">
           <div className="flex items-center">
             <Image
-              src={'/logo bulat chuseyo-01.png'}
+              src={'/logo.png'}
               alt="Logo Kopi Chuseyo Digital"
               width={56}
               height={56}
               className="mr-2"
             />
-            <p className="text-xl font-extrabold text-black">KOPCUS DIGITAL</p>
+            <p className="text-xl font-extrabold text-black">KOPI CHUSEYO</p>
           </div>
         </Link>
 
         {/* Desktop Navigation */}
         <div id="navbar-links" className="hidden md:inline">
           <ul className="flex gap-5">
+            <li>
+              <NavItems href="/events">Events</NavItems>
+            </li>
+            <li>
+              <NavItems href="/works">Works</NavItems>
+            </li>
             <li>
               <NavItems href="/services">Services</NavItems>
             </li>
@@ -103,7 +108,7 @@ export const Navbar = () => {
           id="navbar-social"
           className="hidden items-center gap-4 px-2 md:flex"
         >
-          <Button variant={'ghost'} href="/posts">
+          <Button variant={'ghost'} href="/contact">
             <span className="text-[14px] font-bold">Contact Us</span>
           </Button>
           <Link href={'https://www.instagram.com/kopichuseyo.id/'}>
@@ -176,9 +181,23 @@ export const Navbar = () => {
                       </NavItems>
                     </li>
                     <li>
+                      <NavItems href="/works" onClick={closeMobileMenu}>
+                        <span className="text-3xl font-bold text-black">
+                          Works
+                        </span>
+                      </NavItems>
+                    </li>
+                    <li>
                       <NavItems href="/services" onClick={closeMobileMenu}>
                         <span className="text-3xl font-bold text-black">
                           Services
+                        </span>
+                      </NavItems>
+                    </li>
+                    <li>
+                      <NavItems href="/posts" onClick={closeMobileMenu}>
+                        <span className="text-3xl font-bold text-black">
+                          Posts
                         </span>
                       </NavItems>
                     </li>
@@ -189,20 +208,13 @@ export const Navbar = () => {
                         </span>
                       </NavItems>
                     </li>
-                    <li>
-                      <NavItems href="/works" onClick={closeMobileMenu}>
-                        <span className="text-3xl font-bold text-black">
-                          Works
-                        </span>
-                      </NavItems>
-                    </li>
                   </ul>
                 </nav>
 
                 {/* Mobile Social Links */}
                 <div className="mx-auto flex w-full max-w-sm flex-col gap-4">
                   <Link
-                    href="/posts"
+                    href="/contact"
                     className="rounded-full bg-black px-6 py-3 text-center font-bold text-white"
                     onClick={closeMobileMenu}
                   >

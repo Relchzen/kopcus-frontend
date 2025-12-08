@@ -1,27 +1,28 @@
+"use client"
+
 import React from 'react';
+import { motion } from 'motion/react';
 
 type Props = {
   sectionName: string;
   id: string;
+  className?: string;
 };
 
 export const SectionHeading = (props: Props) => {
-  const { sectionName, id } = props;
+  const { sectionName, id, className } = props;
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
       id={id}
-      className="mb-3 inline-flex w-fit items-center gap-2 rounded-full border-2 border-neutral-200/60 bg-neutral-200/20 px-4 py-1.5 font-semibold text-black backdrop-blur-sm md:mb-6"
+      className={`mb-3 inline-flex w-fit items-center gap-2 rounded-full border-2 border-neutral-200/60 bg-neutral-200/20 px-4 py-1.5 font-semibold text-primary-950 backdrop-blur-sm md:mb-6 ${className || ''}`}
     >
-      <span className="bg-primary-400 h-1.5 w-1.5 rounded-full"></span>
+      <span className="bg-primary-500 h-1.5 w-1.5 rounded-full"></span>
       <h2 className="md:text-md text-xs">{sectionName}</h2>
-    </div>
+    </motion.div>
   );
 };
-
-{
-  /* <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/20 px-4 py-1.5 text-sm font-medium text-black backdrop-blur-sm">
-  <span className="bg-primary-400 h-1.5 w-1.5 rounded-full"></span>
-  Events
-</div>; */
-}

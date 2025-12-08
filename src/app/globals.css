@@ -6,7 +6,7 @@
 
   /* 🎨 Colors */
   --color-black: #212529;
-  --color-white: #f8f9fa;
+  --color-white: #f2f0ef;
 
   /* Primary */
   --color-primary-100: #fce5ee;
@@ -34,16 +34,16 @@
   --color-secondary-dark: #102629;
 
   /* Neutral */
-  --color-neutral-100: #f8f9fa;
-  --color-neutral-150: #f1f3f5;
-  --color-neutral-200: #e9ecef;
-  --color-neutral-300: #dee2e6;
-  --color-neutral-400: #ced4da;
-  --color-neutral-500: #adb5bd;
-  --color-neutral-600: #6c757d;
-  --color-neutral-700: #495057;
-  --color-neutral-800: #343a40;
-  --color-neutral-900: #212529;
+  --color-neutral-100: #f2f0ef; /* Base white tone */
+  --color-neutral-150: #eae7e6;
+  --color-neutral-200: #e1dedc;
+  --color-neutral-300: #d3cfcd;
+  --color-neutral-400: #bfbab8;
+  --color-neutral-500: #a39e9b;
+  --color-neutral-600: #7f7a77;
+  --color-neutral-700: #5f5a58;
+  --color-neutral-800: #3f3b3a;
+  --color-neutral-900: #242221;
 
   /* 🖋 Fonts */
   --font-display: var(--font-bebas-neue);
@@ -64,12 +64,12 @@ h6 {
 
 /* ✅ Consistent horizontal padding (inner space) */
 .section-padding {
-  @apply px-4 md:px-8 lg:px-12;
+  @apply px-2 md:px-8 lg:px-12;
 }
 
 /* ✅ Consistent horizontal margin (outer space) */
 .section-margin {
-  @apply mx-4 md:mx-8 lg:mx-12;
+  @apply mx-2 md:mx-8 lg:mx-12;
 }
 
 .container {

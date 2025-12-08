@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
+import { motion, useMotionValue, useTransform, PanInfo } from 'motion/react';
 import Image from 'next/image';
 
 type Props = {
@@ -86,19 +86,7 @@ const SwipeableCard = ({
     [-200, -100, 0, 100, 200],
     [0.5, 1, 1, 1, 0.5]
   );
-  const arrowLeftOpacity = useTransform(
-    x,
-    [-100, -50, 0, 50, 100],
-    [1, 0, 0, 0, 0]
-  );
-  const arrowRightOpacity = useTransform(
-    x,
-    [-100, -50, 0, 50, 100],
-    [0, 0, 0, 0, 1]
-  );
 
-  // Determine if this card was just moved to the back
-  const isLastCard = stackIndex === totalCards - 1;
 
   return (
     <motion.div

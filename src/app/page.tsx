@@ -1,53 +1,93 @@
-import { Navbar } from '@/components/Navbar';
 import HeroSection from '@/components/sections/HeroSection';
 import EventSection from '@/components/sections/EventSection';
 import ServiceSection from '@/components/sections/ServiceSection';
 import PortfolioSection from '@/components/sections/PortfolioSection/PortfolioSection';
-import { HorizontalScroller } from '@/components/HorizontalScroller';
 import AboutSection from '@/components/sections/AboutSection';
-import TestimonialSection from '@/components/sections/TestimonialSection';
 import ContactSection from '@/components/sections/ContactSection';
 import MobileEventSection from '@/components/sections/MobileEventSection';
+import { Footer } from '@/components/Footer';
+import { fetchStrapi } from '@/lib/strapi';
+import { fetchEvents } from '@/lib/events';
+import { Metadata } from 'next';
 
-export default function Home() {
-  return (
-    <>
-      <header>
-        <Navbar />
-      </header>
-      <main>
-        <HeroSection />
-        <EventSection />
-        <MobileEventSection />
-        <AboutSection />
-        <PortfolioSection />
-        <ServiceSection />
-        <TestimonialSection />
-        <ContactSection />
-        {/* <ServiceSection /> */}
-        {/* <main className="min-h-[200dvh]">
-        <HeroSection />
-        <EventSection />
-        <PortfolioSection />
-        <ServiceSection />
-        <section id="about">About</section>
-        <section id="contact">Contact</section>
-      </main>
-      <footer>Footer</footer> */}
-      </main>
-    </>
-  );
+async function getHomeData() {
+  return fetchStrapi('/api/homepage?pLevel=10', { next: { revalidate: 0 } });
 }
 
-{
-  /* <div className="">
-          <h1>Home Page</h1>
-          <h2>Heading 2</h2>
-          <h3>Heading 3</h3>
-          <h4>Heading 4</h4>
-          <h5>Heading 5</h5>
-          <h6>Heading 6</h6>
-          <p>Paragraph</p>
-          <button>Button</button>
-          </div> */
+export async function generateMetadata(): Promise<Metadata> {
+  const { data } = await getHomeData();
+  const { seo } = data;
+
+  if (!seo) {
+      return {};
+  }
+
+  return {
+    title: seo.metaTitle,
+    description: seo.metaDescription,
+    keywords: seo.keywords,
+    robots: {
+      index: seo.metaRobots?.includes('index'),
+      follow: seo.metaRobots?.includes('follow'),
+    },
+    alternates: {
+      canonical: seo.canonicalURL,
+    },
+    openGraph: {
+      title: seo.metaTitle,
+      description: seo.metaDescription,
+      url: seo.canonicalURL,
+      siteName: 'Kopi Chuseyo',
+      locale: 'en_US',
+      type: 'website',
+      images: [
+        {
+          url: seo.structuredData?.logo || '/logo.png',
+          width: 1200,
+          height: 630,
+          alt: seo.metaTitle,
+        }
+      ]
+    },
+    icons: {
+      icon: '/logo.png',
+      shortcut: '/logo.png',
+      apple: '/logo.png',
+    },
+  };
+}
+
+export default async function Home() {
+  const data = await getHomeData();
+  const events = await fetchEvents();
+
+  const {
+    HeroSection: heroData,
+    AboutSection: aboutData,
+    PortfolioSection: portfolioData,
+    ServiceSection: serviceData,
+    seo
+  } = data.data;
+
+  return (
+    <>
+      {seo?.structuredData && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(seo.structuredData) }}
+        />
+      )}
+      <main className='pt-12'>
+        <HeroSection data={heroData} />
+        <EventSection events={events} />
+        <MobileEventSection events={events} />
+        <AboutSection data={aboutData} />
+        <PortfolioSection data={portfolioData} />
+        <ServiceSection data={serviceData} />
+        {/* <TestimonialSection /> */}
+        <ContactSection />
+      </main>
+      <Footer />
+    </>
+  );
 }

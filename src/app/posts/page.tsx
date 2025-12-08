@@ -1,35 +1,31 @@
-import Link from "next/link";
 import React from "react";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { getPosts } from "@/lib/posts";
+import { Metadata } from "next";
+import { Footer } from "@/components/Footer"
+import PostList from "@/components/PostList";
+
+export const metadata: Metadata = {
+  title: "Posts",
+  description: "Read our latest articles and updates.",
+};
 
 export default async function Posts() {
-  const res = await fetch(
-    process.env.NEXT_PUBLIC_WP_API_URL + "posts?_embed&per_page=5",
-    {
-      next: { revalidate: 60 },
-    }
-  );
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch posts");
-  }
-
-  const posts = await res.json();
-  //   console.log(posts);
+  const posts = await getPosts();
 
   return (
     <div>
-      <main>
-        <h1>Posts</h1>
-        <div>
-          <ul>
-            {posts.map((post: any) => (
-              <li key={post.id}>
-                <Link href={`/posts/${post.slug}`}>{post.title.rendered}</Link>
-              </li>
-            ))}
-          </ul>
+      <main className="container section-padding py-24">
+        <div className="mb-6">
+          <Breadcrumb items={[{ label: 'Posts' }]} />
         </div>
+        <h1 className="mb-12 font-display text-4xl font-bold uppercase tracking-tight md:text-5xl">
+          Latest <span className="text-primary">Insights</span>
+        </h1>
+        
+        <PostList posts={posts} />
       </main>
+      <Footer />
     </div>
   );
 }
