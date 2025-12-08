@@ -52,19 +52,22 @@ export default function ServiceSection({ data }: ServiceSectionProps) {
 
   return (
     <SectionContainer name="services" className="section-padding py-24">
-      <div className="flex flex-col gap-12 lg:flex-row lg:gap-24">
-        {/* Left Column: Heading & Accordion */}
-        <div className="flex-1">
+      <div className="flex flex-col gap-12 lg:flex-row lg:gap-24 lg:items-start">
+        {/* Left Column: Heading & Subheadline (Sticky) */}
+        <div className="flex-1 lg:sticky lg:top-32 lg:self-start">
           <SectionHeading sectionName="Services" id="services-heading" />
           <h2 className="mb-6 text-3xl font-bold tracking-tight text-neutral-900 md:text-4xl lg:text-5xl">
             {data.service_headline}
           </h2>
           {data.service_subheadline && (
-            <p className="mb-12 text-lg text-neutral-600">
+            <p className="text-lg text-neutral-600">
               {data.service_subheadline}
             </p>
           )}
+        </div>
 
+        {/* Right Column: Services List */}
+        <div className="flex-1">
           <div className="flex flex-col gap-4">
             {services.map((service, index) => (
               <div
@@ -101,21 +104,6 @@ export default function ServiceSection({ data }: ServiceSectionProps) {
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Right Column: Images */}
-        <div className="flex-1">
-           {/* Placeholder for image logic if needed, or just show the selected service image */}
-           {services[openIndex ?? 0]?.service_images?.[0] && (
-              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-neutral-100">
-                <Image
-                    src={services[openIndex ?? 0].service_images![0].url}
-                    alt={services[openIndex ?? 0].service_name}
-                    fill
-                    className="object-cover"
-                />
-              </div>
-           )}
         </div>
       </div>
     </SectionContainer>
