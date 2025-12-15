@@ -120,14 +120,15 @@ export const HeroImageSection = ({ hero_images }: HeroImageSectionProps) => {
             </div>
           ))}
         </div>
-        <div
-          className="absolute inset-0 scale-110 blur-xl"
-          style={{
-            backgroundImage: `url(${current.url})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        />
+        <div className="absolute inset-0 scale-110 blur-xl">
+          <NextImage
+            src={current.url}
+            alt=""
+            fill
+            className="object-cover"
+            priority /* Ensure background loads quickly */
+          />
+        </div>
 
         {/* Image */}
         <div className="relative z-10 h-full w-full">

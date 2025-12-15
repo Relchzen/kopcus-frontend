@@ -79,7 +79,7 @@ export const Navbar = () => {
               height={56}
               className="mr-2"
             />
-            <p className="text-xl font-extrabold text-black">KOPI CHUSEYO</p>
+            <p className="text-xl font-extrabold text-black">CHUSEYO</p>
           </div>
         </Link>
 
