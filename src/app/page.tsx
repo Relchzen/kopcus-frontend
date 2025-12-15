@@ -11,7 +11,7 @@ import { fetchEvents } from '@/lib/events';
 import { Metadata } from 'next';
 
 async function getHomeData() {
-  return fetchStrapi('/api/homepage?pLevel=10', { next: { revalidate: 0 } });
+  return fetchStrapi('/api/homepage?pLevel=5', { next: { revalidate: 3600 } });
 }
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -58,8 +58,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const data = await getHomeData();
-  const events = await fetchEvents();
+  const [data, events] = await Promise.all([
+    getHomeData(),
+    fetchEvents()
+  ]);
 
   const {
     HeroSection: heroData,
