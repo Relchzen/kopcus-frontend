@@ -54,7 +54,6 @@ export default async function TagPage({
         
         <PostList posts={posts} />
       </main>
-      <Footer />
     </div>
   );
 }

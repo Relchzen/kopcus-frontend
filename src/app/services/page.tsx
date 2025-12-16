@@ -25,7 +25,6 @@ export default function ServicesPage() {
             <ProcessSection />
             {/* <ServicesTestimonialSection /> */}
             <FinalCTASection />
-            <Footer />
         </main>
     );
 }

@@ -16,7 +16,6 @@ export default async function WorksPage() {
   return (
     <>
       <WorksClient works={works} />
-      <Footer />
     </>
   );
 }

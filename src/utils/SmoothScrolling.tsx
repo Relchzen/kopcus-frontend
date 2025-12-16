@@ -1,14 +1,23 @@
 'use client';
-import { ReactLenis } from 'lenis/react';
+import { ReactLenis, useLenis } from 'lenis/react';
+import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
+
+function ScrollHandler() {
+  const pathname = usePathname();
+  const lenis = useLenis();
+
+  useEffect(() => {
+    lenis?.scrollTo(0, { immediate: true });
+  }, [pathname, lenis]);
+
+  return null;
+}
 
 export function SmoothScrolling() {
-  //   const Lenis = useLenis((lenis) => {
-  //     console.log(lenis);
-  //   });
-
   return (
-    <>
-      <ReactLenis root />
-    </>
+    <ReactLenis root>
+      <ScrollHandler />
+    </ReactLenis>
   );
 }
