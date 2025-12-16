@@ -190,7 +190,7 @@ export default function EventSection({ events }: Props) {
         <div className="flex w-1/2 flex-col justify-end pl-6 lg:w-2/3 lg:pl-12">
           <div className="mb-6 flex items-end justify-between border-b border-white/10 pb-6">
              <div>
-                <h3 className="text-2xl font-bold text-white mb-1">Upcoming Events</h3>
+                <h3 className="text-2xl font-bold text-white mb-1">Featured Events</h3>
                 <p className="text-sm text-neutral-400">Don&apos;t miss out on the hype</p>
              </div>
              
