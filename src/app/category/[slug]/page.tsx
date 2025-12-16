@@ -54,7 +54,6 @@ export default async function CategoryPage({
         
         <PostList posts={posts} />
       </main>
-      <Footer />
     </div>
   );
 }

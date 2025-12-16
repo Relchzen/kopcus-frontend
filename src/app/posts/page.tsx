@@ -25,7 +25,6 @@ export default async function Posts() {
         
         <PostList posts={posts} />
       </main>
-      <Footer />
     </div>
   );
 }

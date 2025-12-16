@@ -29,7 +29,6 @@ export default function AboutPage() {
       <TrackRecord />
       <TheFuture />
       <AboutCTA />
-      <Footer />
     </main>
   );
 }

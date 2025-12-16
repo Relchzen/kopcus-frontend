@@ -167,7 +167,6 @@ export default async function EventPage({
         </div>
       </section>
     </main>
-      <Footer />
     </>
   );
 }

@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 import { Navbar } from '@/components/Navbar';
 import { poppins, bebasNeue, montserrat } from '@/lib/fonts';
 import { SmoothScrolling } from '@/utils/SmoothScrolling';
 import TransitionProvider from '@/components/ui/TransitionProvider';
+import { Footer } from '@/components/Footer';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -42,8 +44,10 @@ export default function RootLayout({
             <Navbar />
           </header>
           <TransitionProvider>{children}</TransitionProvider>
+          <Footer />
         </div>
       </body>
+      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ''} />
     </html>
   );
 }

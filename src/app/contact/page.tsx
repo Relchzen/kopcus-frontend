@@ -14,7 +14,6 @@ export default function ContactPage() {
       <ContactForm />
       <CredibilitySection />
       <ContactFooterCTA />
-      <Footer />
     </main>
   );
 }

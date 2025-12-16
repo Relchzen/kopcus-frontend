@@ -89,7 +89,6 @@ export default async function Home() {
         {/* <TestimonialSection /> */}
         <ContactSection />
       </main>
-      <Footer />
     </>
   );
 }
