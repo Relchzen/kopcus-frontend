@@ -1,5 +1,5 @@
 import React from 'react';
-import { Footer } from '@/components/Footer';
+
 import AboutHero from '@/components/sections/about/AboutHero';
 import OurOrigins from '@/components/sections/about/OurOrigins';
 import ThePivot from '@/components/sections/about/ThePivot';

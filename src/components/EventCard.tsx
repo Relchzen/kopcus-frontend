@@ -16,6 +16,9 @@ type Props = {
   index: number;
 };
 
+// Create MotionLink outside component to avoid recreating on each render
+const MotionLink = motion(Link);
+
 export const EventCard = (props: Props) => {
   const { name, imageUrl, artist, location, date, eventUrl, index } =
     props;
@@ -41,8 +44,6 @@ export const EventCard = (props: Props) => {
     [0, 1, 1]
   );
 
-
-  const MotionLink = motion(Link);
 
   return (
     <MotionLink

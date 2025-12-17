@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getPostsByCategory } from "@/lib/posts";
 import PostList from "@/components/PostList";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
-import { Footer } from "@/components/Footer";
+
 import { Metadata } from "next";
 
 export async function generateMetadata({

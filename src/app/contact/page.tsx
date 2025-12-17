@@ -1,5 +1,5 @@
 import React from 'react';
-import { Footer } from '@/components/Footer';
+
 import { RecaptchaProvider } from '@/components/providers/RecaptchaProvider';
 import ContactHero from '@/components/sections/contact/ContactHero';
 import QualificationSection from '@/components/sections/contact/QualificationSection';

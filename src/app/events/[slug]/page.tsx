@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { getEventBySlug, fetchStrapiEvent } from '@/lib/events';
 import { notFound } from 'next/navigation';
 import BlockRenderer from '@/components/BlockRenderer';
-import { Footer } from '@/components/Footer';
+
 
 import type { Metadata } from 'next';
 

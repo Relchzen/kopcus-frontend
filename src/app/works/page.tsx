@@ -1,5 +1,5 @@
 
-import { Footer } from '@/components/Footer';
+
 import { fetchWorks } from '@/lib/works';
 import { WorksClient } from '@/components/works/WorksClient';
 
