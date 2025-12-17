@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { GoogleAnalytics } from '@next/third-parties/google';
-
+import { ToasterProvider } from '@/components/providers/ToasterProvider';
 import { Navbar } from '@/components/Navbar';
 import { poppins, bebasNeue, montserrat } from '@/lib/fonts';
 import { SmoothScrolling } from '@/utils/SmoothScrolling';
@@ -44,6 +44,7 @@ export default function RootLayout({
             <Navbar />
           </header>
           <TransitionProvider>{children}</TransitionProvider>
+          <ToasterProvider />
           <Footer />
         </div>
       </body>
