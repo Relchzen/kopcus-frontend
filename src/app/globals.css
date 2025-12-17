@@ -83,6 +83,11 @@ h6 {
   }
 }
 
+/* HIDE RECAPTCHA BADGE*/
+.grecaptcha-badge {
+    visibility: hidden;
+}
+
 /* :root {
   --background: #ffffff;
   --foreground: #171717;
