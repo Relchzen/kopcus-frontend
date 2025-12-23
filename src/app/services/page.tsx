@@ -6,7 +6,7 @@ import ServiceDetailsSection from '@/components/sections/services/ServiceDetails
 import ProcessSection from '@/components/sections/services/ProcessSection';
 
 import FinalCTASection from '@/components/sections/services/FinalCTASection';
-import { Footer } from '@/components/Footer';
+
 
 import type { Metadata } from 'next';
 

@@ -5,6 +5,7 @@ import StrapiBlockRenderer from './strapi/StrapiBlockRenderer';
 import TwoColumnsParagraphImage from './strapi/TwoColumnsParagraphImage';
 import TwoColumnsImageParagraph from './strapi/TwoColumnsImageParagraph';
 import ImageGallery from './strapi/ImageGallery';
+import Media from './strapi/Media';
 
 interface Props {
   content: unknown; // Strapi dynamic zone or blocks
@@ -16,6 +17,7 @@ export default function BlockRenderer({ content, className }: Props) {
 
   // Handle Dynamic Zone (array of components)
   if (Array.isArray(content)) {
+    console.log(content);
     return (
       <div className={className}>
         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
@@ -33,6 +35,8 @@ export default function BlockRenderer({ content, className }: Props) {
                   <StrapiBlockRenderer content={block.content} />
                 </div>
               );
+            case 'blog-components.media':
+              return <Media key={index} data={block} />;
             case 'blog-components.quote':
               return (
                 <blockquote key={index} className="my-8 border-l-4 border-primary-500 pl-4 text-xl italic text-gray-700">

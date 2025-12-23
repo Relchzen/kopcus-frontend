@@ -162,13 +162,14 @@ export default function StrapiBlockRenderer({ content }: StrapiBlockRendererProp
                 ? block.image.url 
                 : `${process.env.NEXT_PUBLIC_STRAPI_URL}${block.image.url}`;
             return (
-              <div key={index} className="my-8">
-                <div className="relative aspect-video w-full overflow-hidden rounded-lg">
+              <div key={index} className="my-4 md:my-6 lg:my-8">
+                <div className="relative w-full overflow-hidden rounded-lg">
                   <Image
                     src={imgUrl}
                     alt={block.image.alternativeText || 'Image'}
-                    fill
-                    className="object-cover"
+                    width={block.image.width || 1200}
+                    height={block.image.height || 800}
+                    className="w-full h-auto object-contain"
                   />
                 </div>
                 {block.image.caption && (

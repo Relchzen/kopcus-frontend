@@ -5,7 +5,7 @@ import PortfolioSection from '@/components/sections/PortfolioSection/PortfolioSe
 import AboutSection from '@/components/sections/AboutSection';
 import ContactSection from '@/components/sections/ContactSection';
 import MobileEventSection from '@/components/sections/MobileEventSection';
-import { Footer } from '@/components/Footer';
+
 import { fetchStrapi } from '@/lib/strapi';
 import { fetchEvents } from '@/lib/events';
 import { Metadata } from 'next';

@@ -20,6 +20,9 @@ export default function ImageGallery({ data }: Props) {
   const images = data.images || [];
   const layout = data.layout || 'grid';
 
+  console.log(images);
+  console.log(layout);
+
   if (images.length === 0) return null;
 
   const renderLayout = () => {

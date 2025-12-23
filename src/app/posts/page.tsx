@@ -2,7 +2,7 @@ import React from "react";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { getPosts } from "@/lib/posts";
 import { Metadata } from "next";
-import { Footer } from "@/components/Footer"
+
 import PostList from "@/components/PostList";
 
 export const metadata: Metadata = {
