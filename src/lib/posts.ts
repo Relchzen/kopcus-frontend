@@ -112,12 +112,18 @@ export async function getPosts(filters?: {
 
 // For individual post page - FULL data
 export async function getPostBySlug(slug: string): Promise<Post | null> {
-    const data = await fetchStrapi(`/api/posts?filters[post_slug][$eq]=${slug}&populate=*`);
+    // Use explicit populate like in works.ts to ensure nested relations are fetched
+    const data = await fetchStrapi(
+        `/api/posts?filters[post_slug][$eq]=${slug}&populate[post_content][populate]=*&populate[seo][populate]=*&populate[post_featured_image][populate]=*&populate[categories][populate]=*&populate[tags][populate]=*`
+    );
+
+    console.log("getPostBySlug data: ", data);
 
     if (!data.data || data.data.length === 0) {
         return null;
     }
 
+    console.log(data.data[0])
     return transformPost(data.data[0]);
 }
 
