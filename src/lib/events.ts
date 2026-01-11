@@ -81,33 +81,45 @@ interface ApiResponse {
 const API_URL = process.env.CHUSEYO_API_URL;
 
 function mapApiEvent(item: ApiEvent): Event {
-    // Map status to frontend expected values if needed, or pass through
-    // Frontend expects: 'Available' | 'Coming Soon' | 'Sold Out'
-    // API returns: 'DRAFT', 'PUBLISHED' (assumed), etc.
-    // For now, we'll capitalize or map specifically if we know the values.
-    // Let's default to 'Available' if public, or use the status string.
-
-    const artist = item.organizers?.find(o => o.role === 'Headliner')?.organizer.name
+    const artist =
+        item.organizers?.find(o => o.role === 'Headliner')?.organizer.name
         || item.organizers?.[0]?.organizer.name
         || 'Unknown Artist';
+
+    const statusMap: Record<string, Event['status']> = {
+        DRAFT: 'Coming Soon',
+        SCHEDULED: 'Coming Soon',
+        PUBLISHED: 'Available',
+        ONGOING: 'Available',
+        COMPLETED: 'Ended',
+        CANCELLED: 'Unavailable',
+        POSTPONED: 'Unavailable',
+        ARCHIVED: 'Unavailable',
+    };
+
+    const mappedStatus: Event['status'] =
+        statusMap[item.status] ?? 'Unavailable';
 
     return {
         id: item.id,
         slug: item.slug,
         title: item.title,
         description: item.shortDesc || '',
-        content: item.content || '', // Placeholder if missing
+        content: item.content || '',
         startAt: item.startAt,
         endAt: item.endAt,
-        location: item.venue ? `${item.venue.name}${item.venue.city ? `, ${item.venue.city}` : ''}` : 'TBA',
+        location: item.venue
+            ? `${item.venue.name}${item.venue.city ? `, ${item.venue.city}` : ''}`
+            : 'TBA',
         price: item.price || 'TBA',
-        status: item.status === 'DRAFT' ? 'Coming Soon' : 'Available', // Simple mapping for now
+        status: mappedStatus,
         bannerUrl: item.banner?.url || '',
         posterUrl: item.poster?.url || '',
-        artist: artist,
+        artist,
         ticketLink: item.ticketLink || '#',
     };
 }
+
 
 export async function fetchEvents(): Promise<Event[]> {
     if (!API_URL) {
