@@ -18,8 +18,8 @@ const nextConfig: NextConfig = {
         hostname: 'picsum.photos',
       },
       {
-        protocol: 'http',
-        hostname: '34.101.221.44',
+        protocol: 'https',
+        hostname: 'cms.kopichuseyo.com',
         port: '',
         pathname: '/uploads/**',
       },
