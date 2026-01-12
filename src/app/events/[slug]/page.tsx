@@ -117,11 +117,11 @@ export default async function EventPage({
               <span>{event.location}</span>
             </div>
 
-            <div className="mt-8">
+            {/* <div className="mt-8">
               <Button size="lg" className="px-8 text-lg">
                 Buy Tickets - {event.price}
               </Button>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
@@ -159,9 +159,9 @@ export default async function EventPage({
                   <span>{event.location}</span>
                 </li>
               </ul>
-              <div className="mt-8">
+              {/* <div className="mt-8">
                 <Button className="w-full">Get Directions</Button>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
