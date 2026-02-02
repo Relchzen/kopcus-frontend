@@ -20,7 +20,7 @@ export function WorksClient({ works }: WorksClientProps) {
   return (
     <main className="min-h-screen bg-white text-neutral-900">
       {/* Simple Hero Section */}
-      <SectionContainer name="works-hero" className="pt-32 pb-16 md:pt-48 md:pb-24">
+      <SectionContainer name="works-hero" className="py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
