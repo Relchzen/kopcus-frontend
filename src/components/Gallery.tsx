@@ -2,6 +2,8 @@
 
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import Masonry from 'react-masonry-css';
+import {JustifiedGallery as ReactJustifiedGallery} from '@n-ivan/react-justified-gallery';
 
 const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL || 'http://localhost:3001';
 
@@ -41,7 +43,7 @@ interface GalleryProps {
     images: GalleryImage[]
     columns?: number
     gap?: 'small' | 'medium' | 'large'
-    layout?: 'grid' | 'masonry' | 'justify' | 'carousel'
+    layout?: 'grid' | 'masonry' | 'justified' | 'carousel'
 }
 
 function getOptimizedImageUrl(image: GalleryImage, context: GalleryProps['layout'] | 'thumbnail', containerWidth?: number): string {
@@ -187,15 +189,28 @@ export function GridGallery({ images, columns = 3, gap = 'medium' }: GalleryProp
 }
 
 export function MasonryGallery({ images, columns = 3, gap = 'medium' }: GalleryProps) {
-    const gapClass = getGapClass(gap)
+    // Convert gap to pixel values for masonry
+    const gapValue = gap === 'small' ? 8 : gap === 'large' ? 24 : 16;
+    
+    // Calculate responsive breakpoints based on columns prop
+    const breakpointCols = {
+        default: columns,
+        1024: Math.min(columns, 2),
+        640: 1
+    };
+
     return (
         <>
-            <div className={`columns-2 md:columns-${columns} ${gapClass} my-8`}>
-                {images.map((image, index) => {
+            <Masonry
+                breakpointCols={breakpointCols}
+                className="flex -ml-4 md:-ml-6 w-auto my-8"
+                columnClassName="pl-4 md:pl-6 bg-clip-padding"
+            >
+                {images.map((image) => {
                     const imageUrl = getOptimizedImageUrl(image, 'masonry')
                     const { height, width } = getImageDimensions(image, 'masonry')
                     return (
-                        <div key={image.id} className="relative mb-4 break-inside-avoid overflow-hidden rounded-lg">
+                        <div key={image.id} className="relative mb-4 md:mb-6 overflow-hidden rounded-lg">
                             <Image
                                 src={imageUrl}
                                 alt={image.alt || image.filename || 'Gallery image'}
@@ -207,48 +222,60 @@ export function MasonryGallery({ images, columns = 3, gap = 'medium' }: GalleryP
                         </div>
                     )
                 })}
-            </div>
+            </Masonry>
         </>
      )
 }
 
-export function JustifiedGallery({images, gap='medium'}: GalleryProps){
-    const gapClass = getGapClass(gap)
+export function JustifiedGallery({
+  images,
+  gap = "medium",
+}: GalleryProps) {
+  const gapValue = gap === "small" ? 8 : gap === "large" ? 24 : 16;
 
-    return (
-        <>
-            <div className={`flex flex-wrap my-8 ${gapClass}`}>
-                {images.map((image, index) => {
-                    const imageUrl = getOptimizedImageUrl(image, 'grid')
-                    const aspectRatio = image.width / image.height
-                    
-                    // Target height for justified layout
-                    const targetHeight = 250
-                    const calculatedWidth = targetHeight * aspectRatio
+  const formattedImages = images.map((image) => ({
+    src: getOptimizedImageUrl(image, "justified"),
+    width: image.width,
+    height: image.height,
+    alt: image.alt || image.filename || "Gallery image",
+    id: image.id,
+    filename: image.filename,
+  }));
 
-                    return (
-                        <div
-                        key={image.id}
-                        className="relative overflow-hidden rounded-lg group"
-                        style={{ 
-                            flexBasis: calculatedWidth,
-                            maxHeight: targetHeight,
-                        }}
-                        >
-                            <Image
-                                src={imageUrl}
-                                alt={image.alt || image.filename || 'Gallery image'}
-                                width={image.width}
-                                height={image.height}
-                                className="w-full h-full object-cover"
-                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                            />
-                        </div>
-          )
-                })}
-            </div>
-        </>
-    )
+    const imageRows = [];
+  let i = 0;
+  
+  while (i < formattedImages.length) {
+    // Randomly choose between 2-4 images per row for visual variety
+    const imagesInThisRow = Math.min(
+      Math.floor(Math.random() * 2) + 2, // Random number between 2-3
+      formattedImages.length - i // Don't exceed remaining images
+    );
+    
+    imageRows.push(formattedImages.slice(i, i + imagesInThisRow));
+    i += imagesInThisRow;
+  }
+
+  return (
+    <div className="my-8">
+      <ReactJustifiedGallery
+        images={imageRows}  // ✅ Pass the array directly
+        gap={gapValue}
+        renderImage={({ image }) => (
+          <Image
+            src={image.src}
+            alt={image.alt!}
+            width={image.width}
+            height={image.height}
+            className="w-full h-full object-cover rounded-lg"
+            sizes="(max-width: 640px) 100vw,
+                   (max-width: 1024px) 50vw,
+                   33vw"
+          />
+        )}
+      />
+    </div>
+  );
 }
 
 export function CarouselGallery({ images }: GalleryProps) {
@@ -364,7 +391,7 @@ export default function Gallery({ images, layout, columns, gap }: GalleryProps) 
     case 'masonry':
       return <MasonryGallery images={images} layout={layout} columns={columns} gap={gap} />
     
-    case 'justify':
+    case 'justified':
       return <JustifiedGallery images={images} layout={layout} gap={gap} />
     
     case 'carousel':

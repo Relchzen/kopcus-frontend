@@ -125,7 +125,8 @@ function parseBlock(node: any): string {
     
     case 'quote':
       return parseQuoteBlock(node)
-    
+    case 'columns':
+      return parseColumns(node)
     default:
       return ''
   }
@@ -144,11 +145,10 @@ function parseColumns(fields: any): string {
     }[gap] || 'gap-6' 
     
     const layoutClass = {
-        '2-equal': 'md:grid-cols-2',
-    '3-equal': 'md:grid-cols-3',
-    '4-equal': 'md:grid-cols-4',
-    '1-2': 'md:grid-cols-3', // 1/3 and 2/3
-    '2-1': 'md:grid-cols-3', // 2/3 and 1/3
+      '2-equal': 'md:grid-cols-2',
+      '3-equal': 'md:grid-cols-3',
+      '2-by-1': 'md:grid-cols-3',  // 67/33 split
+      '1-by-2': 'md:grid-cols-3',  // 33/67 split
     }[layout] || 'md:grid-cols-2'
     
     const columnHtml = fields.columns.map((column: any, index: number) => {
@@ -159,9 +159,11 @@ function parseColumns(fields: any): string {
         }).join('')
 
 let colSpan = ''
-    if (layout === '1-2') {
+    if (layout === '1-by-2') {
+      // 33/67 split: first column takes 1/3, second takes 2/3
       colSpan = index === 0 ? 'md:col-span-1' : 'md:col-span-2'
-    } else if (layout === '2-1') {
+    } else if (layout === '2-by-1') {
+      // 67/33 split: first column takes 2/3, second takes 1/3
       colSpan = index === 0 ? 'md:col-span-2' : 'md:col-span-1'
     }
 
@@ -276,6 +278,7 @@ function parseGallery(fields: any): string {
   const layout = fields.layout || 'grid'
   const columns = fields.columns || 3
   const gap = fields.gap || 'medium'
+  console.log(fields)
 
   // Generate a unique ID for this gallery instance
   const galleryId = `gallery-${Math.random().toString(36).substr(2, 9)}`
