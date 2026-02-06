@@ -110,3 +110,177 @@ export async function fetchFromPayload<T>(
         throw error
     }
 }
+
+export async function getHomePage() {
+    const slug = 'home'
+    const query = `
+        query getPage($slug: String!) {
+            Pages(where: { slug: { equals: $slug } }) {
+                docs {
+                    id
+                    title
+                    slug
+                    meta {
+                        title
+                        description
+                        image {
+                            thumbnailURL
+                        }
+                    }
+                    hero {
+                        type
+                        richText
+                        links {
+                            link {
+                                type
+                                label
+                                url
+                                appearance
+                            }
+                        }
+                        images {
+                            id
+                            image {
+                                alt
+                                filename
+                                sizes {
+                                    small {
+                                        url
+                                        width
+                                        height
+                                    }
+                                    medium {
+                                        url
+                                        width
+                                        height
+                                    }
+                                    og {
+                                        url
+                                        width
+                                        height
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    layout {
+                        ... on ContentBlock {
+                            blockType
+                            blockName
+                            columns {
+                                size
+                                richText
+                                enableLink
+                                link {
+                                    type
+                                    label
+                                    url
+                                    appearance
+                                }
+                            }
+                        }
+                        ... on ArchiveBlock {
+                            blockName
+                            blockType
+                            introContent
+                            populateBy
+                            relationTo
+                            showFeaturedOnly
+                            limit
+                            selectedDocs {
+                                value {
+                                    ... on Portfolio {
+                                        title
+                                        artistOrBrand
+                                        projectDate
+                                        portfolioSlug: slug
+                                        heroImage {
+                                            alt
+                                            filename
+                                            sizes {
+                                                medium {
+                                                    url
+                                                }
+                                                small {
+                                                    url
+                                                }
+                                                og {
+                                                    url
+                                                }
+                                            }
+                                        }
+                                        meta{
+                                            image{
+                                                alt
+                                                filename
+                                                sizes {
+                                                    medium {
+                                                        url
+                                                        width
+                                                        height
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    ... on Service {
+                                        name
+                                        description
+                                        images {
+                                            image {
+                                                alt
+                                                filename
+                                                thumbnailURL
+                                            }
+                                        }
+                                        serviceSlug: slug
+                                    }
+                                    ... on Post {
+                                        title
+                                        categories {
+                                            title
+                                            slug
+                                        }
+                                        postSlug: slug
+                                        meta {
+                                            description
+                                        }
+                                        publishedAt
+                                        heroImage {
+                                            alt
+                                            filename
+                                            sizes {
+                                                small {
+                                                    url
+                                                    width
+                                                    height
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            link {
+                                type
+                                label
+                                url
+                                appearance
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    `
+
+    const response: any = await graphqlRequest(query,
+        { slug },
+        {
+            revalidate: 1800,
+            tags: ['home']
+        }
+    )
+
+    return response.Pages.docs[0]
+
+}

@@ -21,7 +21,6 @@ export default async function WorksPage({ searchParams }: { searchParams: Promis
       revalidate: 60,
     })
   
-  console.log("Works: ", works)
   return (
     <>
       <WorksClient works={works.docs} />
