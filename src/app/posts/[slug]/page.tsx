@@ -10,23 +10,24 @@ const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL || 'http://localhost:3001'
 
 export async function generateMetadata({
     params
-}: {params: Promise<{ slug: string }>
-    }) {
+}: {
+    params: Promise<{ slug: string }>
+}) {
     const post = await getPostBySlug((await params).slug)
 
     if (!post) return {}
 
-  return {
-    title: post.meta?.title || post.title,
-    description: post.meta?.description,
-    openGraph: {
-      title: post.meta?.title || post.title,
-      description: post.meta?.description,
-      images: `${CMS_URL}${post.meta?.image?.sizes?.small?.url}`,
-      type: 'article',
-      publishedTime: post.publishedAt,
-    },
-  }
+    return {
+        title: post.meta?.title || post.title,
+        description: post.meta?.description,
+        openGraph: {
+            title: post.meta?.title || post.title,
+            description: post.meta?.description,
+            images: `${CMS_URL}${post.meta?.image?.sizes?.small?.url}`,
+            type: 'article',
+            publishedTime: post.publishedAt,
+        },
+    }
 }
 
 export default async function PostPage({
@@ -47,21 +48,21 @@ export default async function PostPage({
         <div className="flex min-h-screen flex-col">
             <main className="container section-padding flex-1 py-12 md:py-24">
                 <div className="mb-8">
-                    <Breadcrumb 
+                    <Breadcrumb
                         items={[
                             { label: 'Posts', href: '/posts' },
                             { label: post.title }
-                        ]} 
-                        />
+                        ]}
+                    />
                 </div>
-                
+
                 <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
                     <article className="lg:col-span-8">
                         <header className="mb-12">
                             {post.categories && post.categories.length > 0 && (
                                 <div className="mb-6 flex flex-wrap gap-2">
                                     {post.categories.map((cat) => (
-                                        <Link 
+                                        <Link
                                             key={cat.slug}
                                             href={`/category/${cat.slug}`}
                                             className="rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold uppercase tracking-wider text-black transition-colors hover:bg-primary hover:text-primary-400"
@@ -85,23 +86,23 @@ export default async function PostPage({
                             </div>
                         </header>
                         {post.heroImage && (
-                        <div className="relative mb-12 shadow-lg">
-                            <Image
-                                src={`${CMS_URL}/${post.heroImage.sizes.large.url}`}
-                                alt={post.heroImage.alt || post.title}
-                                width={post.heroImage.sizes.large.width}
-                                height={post.heroImage.sizes.large.height}
-                                className="object-cover rounded-2xl"
-                            />
-                        </div>
+                            <div className="relative mb-12 shadow-lg">
+                                <Image
+                                    src={`${CMS_URL}/${post.heroImage.sizes.large.url}`}
+                                    alt={post.heroImage.alt || post.title}
+                                    width={post.heroImage.sizes.large.width}
+                                    height={post.heroImage.sizes.large.height}
+                                    className="object-cover rounded-2xl"
+                                />
+                            </div>
                         )}
 
-                        <div 
-          className="prose prose-lg prose-neutral max-w-none"
-          dangerouslySetInnerHTML={{ __html: contentHtml }}
-        />
+                        <div
+                            className="prose prose-lg prose-neutral max-w-none"
+                            dangerouslySetInnerHTML={{ __html: contentHtml }}
+                        />
                         <GalleryHydrator />
-                    </article>   
+                    </article>
                     <aside className="lg:col-span-4">
                         {/* Related Posts */}
                         {post.relatedPosts && post.relatedPosts.length > 0 && (
@@ -111,7 +112,7 @@ export default async function PostPage({
                                 </h2>
                                 <div className="grid gap-4">
                                     {post.relatedPosts.map((relatedPost) => (
-                                        <Link 
+                                        <Link
                                             key={relatedPost.id}
                                             href={`/posts/${relatedPost.slug}`}
                                             className="group flex gap-4 overflow-hidden rounded-lg border border-gray-200 bg-white p-3 transition-all duration-300 hover:shadow-md hover:border-primary/30"
@@ -172,7 +173,7 @@ export default async function PostPage({
                                 </h2>
                                 <div className="grid gap-4">
                                     {recent.map((post) => (
-                                        <Link 
+                                        <Link
                                             key={post.id}
                                             href={`/posts/${post.slug}`}
                                             className="group flex gap-4 overflow-hidden rounded-lg border border-gray-200 bg-white p-3 transition-all duration-300 hover:shadow-md hover:border-primary/30"

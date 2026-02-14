@@ -225,7 +225,7 @@ export async function getHomePage() {
                                     }
                                     ... on Service {
                                         name
-                                        description
+                                        serviceDescription: description
                                         images {
                                             image {
                                                 alt
@@ -251,6 +251,62 @@ export async function getHomePage() {
                                             filename
                                             sizes {
                                                 small {
+                                                    url
+                                                    width
+                                                    height
+                                                }
+                                            }
+                                        }
+                                    }
+                                    ... on Event {
+                                        title
+                                        slug
+                                        artistOrBrand
+                                        eventStatus
+                                        dateStatus
+                                        startDate
+                                        endDate
+                                        location {
+                                            venue
+                                            showLocation
+                                        }
+                                        description
+                                        bannerImage {
+                                            alt
+                                            filename
+                                            sizes {
+                                                large {
+                                                    url
+                                                    width
+                                                    height
+                                                }
+                                                medium {
+                                                    url
+                                                    width
+                                                    height
+                                                }
+                                                og {
+                                                    url
+                                                    width
+                                                    height
+                                                }
+                                            }
+                                        }
+                                        posterImage {
+                                            alt
+                                            filename
+                                            sizes {
+                                                small {
+                                                    url
+                                                    width
+                                                    height
+                                                }
+                                                medium {
+                                                    url
+                                                    width
+                                                    height
+                                                }
+                                                og {
                                                     url
                                                     width
                                                     height

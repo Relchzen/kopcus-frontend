@@ -21,6 +21,7 @@ export interface ServiceDoc {
     name: string;
     slug: string;
     description?: string;
+    serviceDescription?: string;
     images?: {
         image: ServiceImage;
     }[];
@@ -59,8 +60,8 @@ const RichText = ({ content, className }: { content: any[], className?: string }
                         {node.children?.map((child: any, i: number) => renderNode(child, i))}
                     </p>
                 );
-             default:
-                 if (node.children) {
+            default:
+                if (node.children) {
                     return <div key={index}>{node.children.map((child: any, i: number) => renderNode(child, i))}</div>;
                 }
                 return null;
@@ -83,7 +84,7 @@ export const ServiceArchiveRenderer = ({ services, heading, introContent }: Serv
 
     if (!services || services.length === 0) return null;
 
-     // Logic to split introContent into Heading (Left) and Text (Right)
+    // Logic to split introContent into Heading (Left) and Text (Right)
     let headingNodes: any[] = [];
     let textNodes: any[] = [];
 
@@ -91,13 +92,13 @@ export const ServiceArchiveRenderer = ({ services, heading, introContent }: Serv
         const children = introContent.root.children;
         // Find the first heading node
         const firstHeadingIndex = children.findIndex((child: any) => child.type === 'heading');
-        
+
         if (firstHeadingIndex !== -1) {
             headingNodes = [children[firstHeadingIndex]];
             // Everything else goes to textNodes, excluding the first heading
-             textNodes = children.filter((_: any, idx: number) => idx !== firstHeadingIndex);
+            textNodes = children.filter((_: any, idx: number) => idx !== firstHeadingIndex);
         } else {
-             textNodes = children;
+            textNodes = children;
         }
     }
 
@@ -107,7 +108,7 @@ export const ServiceArchiveRenderer = ({ services, heading, introContent }: Serv
                 {/* Left Column: Heading & Subheadline (Sticky) */}
                 <div className="flex-1 lg:sticky lg:top-32 lg:self-start">
                     {heading && <SectionHeading sectionName={heading} id="services-heading" />}
-                    
+
                     {headingNodes.length > 0 && <RichText content={headingNodes} />}
                     {textNodes.length > 0 && <RichText content={textNodes} />}
                 </div>
@@ -118,9 +119,8 @@ export const ServiceArchiveRenderer = ({ services, heading, introContent }: Serv
                         {services.map((service, index) => (
                             <div
                                 key={service.id}
-                                className={`cursor-pointer border-b border-neutral-200 pb-4 transition-all ${
-                                    openIndex === index ? 'opacity-100' : 'opacity-60 hover:opacity-100'
-                                }`}
+                                className={`cursor-pointer border-b border-neutral-200 pb-4 transition-all ${openIndex === index ? 'opacity-100' : 'opacity-60 hover:opacity-100'
+                                    }`}
                                 onClick={() => toggleAccordion(index)}
                             >
                                 <div className="flex items-center justify-between py-2">
@@ -128,18 +128,16 @@ export const ServiceArchiveRenderer = ({ services, heading, introContent }: Serv
                                         {service.name}
                                     </h3>
                                     <PiArrowDownLight
-                                        className={`h-6 w-6 transition-transform duration-300 ${
-                                            openIndex === index ? 'rotate-180' : ''
-                                        }`}
+                                        className={`h-6 w-6 transition-transform duration-300 ${openIndex === index ? 'rotate-180' : ''
+                                            }`}
                                     />
                                 </div>
                                 <div
-                                    className={`overflow-hidden transition-all duration-300 ${
-                                        openIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                                    }`}
+                                    className={`overflow-hidden transition-all duration-300 ${openIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                                        }`}
                                 >
                                     <p className="pt-4 text-neutral-600">
-                                        {service.description}
+                                        {service.description || service.serviceDescription}
                                     </p>
                                     <div className="mt-6">
                                         <Button href={`/services`} variant="outline" size="sm">

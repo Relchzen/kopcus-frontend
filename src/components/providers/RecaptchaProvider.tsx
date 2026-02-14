@@ -8,15 +8,15 @@ export const RecaptchaProvider = ({ children }: { children: ReactNode }) => {
 
     return (
         <GoogleReCaptchaProvider
-            reCaptchaKey= { recaptchaKey ?? ''}
-            scriptProps = {{
-                async: false,
-                defer: false,
+            reCaptchaKey={recaptchaKey ?? ''}
+            scriptProps={{
+                async: true,
+                defer: true,
                 appendTo: 'head',
                 nonce: undefined,
             }}
         >
-    { children }
-    </GoogleReCaptchaProvider>
+            {children}
+        </GoogleReCaptchaProvider>
     )
 }

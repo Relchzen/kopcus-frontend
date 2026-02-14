@@ -1,95 +1,85 @@
-// components/contact/ContactForm.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { toast } from 'sonner';
 import { SectionContainer } from '@/components/SectionContainer';
 import { Button } from '@/components/ui/Button';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod'; // Import Zod wajib
+import * as z from 'zod';
 
-// Import Shared Logic
 import { contactFormSchema, ContactFormData } from '@/lib/validations/contact';
-import { submitContactInquiry } from '@/lib/actions/contact';
+
+// Create client schema ONCE (not per render)
+const clientFormSchema = contactFormSchema.omit({ captchaToken: true });
+type ClientFormData = z.infer<typeof clientFormSchema>;
 
 export default function ContactForm() {
   const { executeRecaptcha } = useGoogleReCaptcha();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // --- PERBAIKAN UTAMA DI SINI ---
-  // Kita buat schema khusus Client yang TIDAK mengecek captchaToken
-  // karena token belum ada saat user mengetik di form.
-  const clientFormSchema = contactFormSchema.omit({ captchaToken: true });
-  
-  // Type baru khusus untuk form UI
-  type ClientFormData = z.infer<typeof clientFormSchema>;
-
-  // Setup Form dengan Schema Client
   const {
     register,
     handleSubmit,
     reset,
     watch,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<ClientFormData>({
-    resolver: zodResolver(clientFormSchema), // Gunakan schema yang sudah di-omit
+    resolver: zodResolver(clientFormSchema),
     defaultValues: {
-      name: '',
+      fullname: '',
       company: '',
       email: '',
       phone: '',
       projectType: undefined,
-      estimatedTimeline: '',
-      budgetRange: undefined,
-      description: '',
+      message: '',
+      website: '',
     },
   });
 
-  const descriptionValue = watch('description') || '';
+  const messageValue = watch('message') || '';
 
-  // Handle Submit
-  // Data di sini bertipe ClientFormData (tanpa token)
   const onSubmit = async (data: ClientFormData) => {
-    setIsSubmitting(true);
-
     if (!executeRecaptcha) {
       toast.error('ReCAPTCHA not ready. Please check your connection.');
-      setIsSubmitting(false);
       return;
     }
 
     try {
-      // 1. Generate Token (Invisible)
       const token = await executeRecaptcha('contact_submit');
 
-      // 2. Gabungkan data Form + Token menjadi Payload Lengkap
-      // TypeScript akan senang karena ini cocok dengan ContactFormData (Schema Server)
       const payload: ContactFormData = {
         ...data,
         captchaToken: token,
       };
 
-      // 3. Panggil Server Action
-      const result = await submitContactInquiry(payload);
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
-      if (result.success) {
-        toast.success(result.message);
-        reset();
-      } else {
-        throw new Error(result.message);
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || result.message || 'Failed to submit inquiry');
       }
 
+      toast.success(result.message || 'Inquiry submitted successfully');
+
+      reset();
+      document.getElementById('name')?.focus(); // accessibility improvement
+
     } catch (error) {
-      console.error(error);
-      toast.error(error instanceof Error ? error.message : 'Failed to submit inquiry.');
-    } finally {
-      setIsSubmitting(false);
+      console.error('Contact submission error:', error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : 'Failed to submit inquiry.'
+      );
     }
   };
 
-  // Helper Error UI
   const ErrorMsg = ({ error }: { error?: { message?: string } }) => {
     if (!error?.message) return null;
     return <p className="mt-1 text-xs text-red-500">{error.message}</p>;
@@ -99,27 +89,36 @@ export default function ContactForm() {
     <SectionContainer name="contact-form" className="bg-white pb-24">
       <div className="container">
         <div className="mx-auto max-w-3xl rounded-lg border border-neutral-200 bg-white p-8 md:p-12">
-          {/* Hapus onError debug, kembalikan ke standar */}
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-            
-            {/* Row 1: Name & Company */}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8" noValidate>
+
+            {/* Honeypot (off-screen, more reliable than display:none) */}
+            <input
+              type="text"
+              {...register('website')}
+              className="absolute left-[-9999px]"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+            />
+
+            {/* Row 1 */}
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-medium text-neutral-900">
+                <label htmlFor="fullname" className="text-sm font-medium text-neutral-900">
                   Full Name <span className="text-red-500">*</span>
                 </label>
                 <input
-                  {...register('name')}
+                  {...register('fullname')}
                   type="text"
-                  id="name"
+                  id="fullname"
                   maxLength={100}
-                  className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 ${
-                    errors.name ? 'border-red-500' : 'border-neutral-200'
-                  }`}
+                  className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 ${errors.fullname ? 'border-red-500' : 'border-neutral-200'
+                    }`}
                   placeholder="John Doe"
                 />
-                <ErrorMsg error={errors.name} />
+                <ErrorMsg error={errors.fullname} />
               </div>
+
               <div className="space-y-2">
                 <label htmlFor="company" className="text-sm font-medium text-neutral-900">
                   Company / Brand <span className="text-red-500">*</span>
@@ -129,16 +128,15 @@ export default function ContactForm() {
                   type="text"
                   id="company"
                   maxLength={100}
-                  className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 ${
-                    errors.company ? 'border-red-500' : 'border-neutral-200'
-                  }`}
+                  className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 ${errors.company ? 'border-red-500' : 'border-neutral-200'
+                    }`}
                   placeholder="Company Name"
                 />
                 <ErrorMsg error={errors.company} />
               </div>
             </div>
 
-            {/* Row 2: Email & Phone */}
+            {/* Row 2 */}
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <label htmlFor="email" className="text-sm font-medium text-neutral-900">
@@ -149,13 +147,13 @@ export default function ContactForm() {
                   type="email"
                   id="email"
                   maxLength={255}
-                  className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 ${
-                    errors.email ? 'border-red-500' : 'border-neutral-200'
-                  }`}
+                  className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 ${errors.email ? 'border-red-500' : 'border-neutral-200'
+                    }`}
                   placeholder="john@company.com"
                 />
                 <ErrorMsg error={errors.email} />
               </div>
+
               <div className="space-y-2">
                 <label htmlFor="phone" className="text-sm font-medium text-neutral-900">
                   Phone / WhatsApp <span className="text-red-500">*</span>
@@ -165,111 +163,81 @@ export default function ContactForm() {
                   type="tel"
                   id="phone"
                   maxLength={20}
-                  className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 ${
-                    errors.phone ? 'border-red-500' : 'border-neutral-200'
-                  }`}
+                  className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 ${errors.phone ? 'border-red-500' : 'border-neutral-200'
+                    }`}
                   placeholder="+62..."
                 />
                 <ErrorMsg error={errors.phone} />
               </div>
             </div>
 
-            {/* Row 3: Project Type & Timeline */}
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="space-y-2">
-                <label htmlFor="projectType" className="text-sm font-medium text-neutral-900">
-                  Project Type <span className="text-red-500">*</span>
-                </label>
-                <select
-                  {...register('projectType')}
-                  id="projectType"
-                  className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 bg-white ${
-                    errors.projectType ? 'border-red-500' : 'border-neutral-200'
-                  }`}
-                >
-                  <option value="" disabled>Select Type</option>
-                  <option value="event">Event Activation</option>
-                  <option value="influencer">Influencer Marketing</option>
-                  <option value="media">Media Promotion</option>
-                  <option value="content">Content Creation</option>
-                  <option value="other">Other</option>
-                </select>
-                <ErrorMsg error={errors.projectType} />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="estimatedTimeline" className="text-sm font-medium text-neutral-900">
-                  Estimated Timeline
-                </label>
-                <select
-                  {...register('estimatedTimeline')}
-                  id="estimatedTimeline"
-                  className="w-full rounded-md border border-neutral-200 px-4 py-3 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 bg-white"
-                >
-                   <option value="">Select Timeline (Optional)</option>
-                   <option value="asap">ASAP</option>
-                   <option value="1-month">Within 1 Month</option>
-                   <option value="1-3-months">1-3 Months</option>
-                   <option value="3-months-plus">3+ Months</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Row 4: Budget */}
+            {/* Project Type */}
             <div className="space-y-2">
-                <label htmlFor="budgetRange" className="text-sm font-medium text-neutral-900">
-                  Budget Range <span className="text-red-500">*</span>
-                </label>
-                <select
-                  {...register('budgetRange')}
-                  id="budgetRange"
-                  className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 bg-white ${
-                    errors.budgetRange ? 'border-red-500' : 'border-neutral-200'
+              <label htmlFor="projectType" className="text-sm font-medium text-neutral-900">
+                Project Type <span className="text-red-500">*</span>
+              </label>
+              <select
+                {...register('projectType')}
+                id="projectType"
+                className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 bg-white ${errors.projectType ? 'border-red-500' : 'border-neutral-200'
                   }`}
-                >
-                  <option value="" disabled>Select Budget Range</option>
-                  <option value="under-10m">&lt; 10 Million IDR</option>
-                  <option value="10m-50m">10 - 50 Million IDR</option>
-                  <option value="50m-150m">50 - 150 Million IDR</option>
-                  <option value="150m-plus">150 Million+ IDR</option>
-                </select>
-                <ErrorMsg error={errors.budgetRange} />
+              >
+                <option value="" disabled>
+                  Select Type
+                </option>
+                <option value="event">Event Activation</option>
+                <option value="influencer">Influencer Marketing</option>
+                <option value="media">Media Promotion</option>
+                <option value="content">Content Creation</option>
+                <option value="other">Other</option>
+              </select>
+              <ErrorMsg error={errors.projectType} />
             </div>
 
-            {/* Row 5: Description */}
+            {/* Message */}
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <label htmlFor="description" className="text-sm font-medium text-neutral-900">
+                <label htmlFor="message" className="text-sm font-medium text-neutral-900">
                   Project Description <span className="text-red-500">*</span>
                 </label>
-                <span className={`text-xs ${descriptionValue.length > 1000 ? 'text-red-500' : 'text-neutral-400'}`}>
-                  {descriptionValue.length}/1000
+                <span
+                  className={`text-xs ${messageValue.length > 1000
+                    ? 'text-red-500'
+                    : 'text-neutral-400'
+                    }`}
+                >
+                  {messageValue.length}/1000
                 </span>
               </div>
               <textarea
-                {...register('description')}
-                id="description"
+                {...register('message')}
+                id="message"
                 rows={5}
                 maxLength={1000}
-                className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 resize-none ${
-                  errors.description ? 'border-red-500' : 'border-neutral-200'
-                }`}
+                className={`w-full rounded-md border px-4 py-3 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 resize-none ${errors.message ? 'border-red-500' : 'border-neutral-200'
+                  }`}
                 placeholder="Tell us about your goals, target audience, and any specific requirements..."
               />
-              <ErrorMsg error={errors.description} />
+              <ErrorMsg error={errors.message} />
             </div>
-            
+
             <p className="text-xs text-gray-500 text-center">
               This site is protected by reCAPTCHA and the Google{' '}
-              <a href="https://policies.google.com/privacy" className="underline text-neutral-700">Privacy Policy</a> and{' '}
-              <a href="https://policies.google.com/terms" className="underline text-neutral-700">Terms of Service</a> apply.
+              <a href="https://policies.google.com/privacy" className="underline text-neutral-700">
+                Privacy Policy
+              </a>{' '}
+              and{' '}
+              <a href="https://policies.google.com/terms" className="underline text-neutral-700">
+                Terms of Service
+              </a>{' '}
+              apply.
             </p>
 
             <div className="pt-2">
-              {/* Kembalikan komponen Button Asli */}
-              <Button 
-                type="submit" 
-                variant="primary" 
-                size="lg" 
+              <Button
+                type="submit"
+                variant="primary"
+                size="lg"
                 className="w-full text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isSubmitting}
               >

@@ -7,9 +7,27 @@ import { graphqlRequest, buildWhereClause } from '@/lib/graphql-client';
 import { ServiceArchiveRenderer } from './ServiceArchiveRenderer';
 import { PortfolioArchiveRenderer } from './PortfolioArchiveRenderer';
 import { PostsArchiveRenderer } from './PostsArchiveRenderer';
+import { EventsArchiveRenderer } from './EventsArchiveRenderer';
 
 interface ArchiveBlockProps {
-// ... (existing interface) ...
+    block: {
+        blockName?: string
+        blockType: 'archive'
+        introContent?: any
+        populateBy: 'collection' | 'selection'
+        relationTo?: 'portfolio' | 'services' | 'posts' | 'events'
+        showFeaturedOnly?: boolean
+        limit?: number
+        selectedDocs?: {
+            value: any
+        }[]
+        link?: {
+            type?: 'reference' | 'custom'
+            label: string
+            url: string
+            appearance?: 'default' | 'outline' | 'ghost'
+        }
+    }
 }
 
 const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL;
@@ -107,6 +125,78 @@ const SERVICES_QUERY = `
     }
 `;
 
+const EVENTS_QUERY = `
+    query Events($limit: Int) {
+        Events(limit: $limit, WHERE_CLAUSE) {
+            docs {
+                id
+                title
+                slug
+                eventStatus
+                startDate
+                endDate
+                eventDescription:description
+                ticketAvailability
+                ticketLink
+                location {
+                    venue
+                    showLocation
+                }
+                bannerImage {
+                    alt
+                    url
+                    filename
+                    sizes {
+                        medium {
+                            url
+                            width
+                            height
+                        }
+                        large {
+                            url
+                            width
+                            height
+                        }
+                        small {
+                            url
+                            width
+                            height
+                        }
+                        og {
+                            url
+                            width
+                            height
+                        }
+                    }
+                }
+                posterImage {
+                    alt
+                    url
+                    filename
+                    sizes {
+                        medium {
+                            url
+                            width
+                            height
+                        }
+                        small {
+                            url
+                            width
+                            height
+                        }
+                        og {
+                            url
+                            width
+                            height
+                        }
+                    }
+                }
+            }
+            totalDocs
+            limit 
+        }
+    }
+`
 
 
 export const ArchiveBlock = async ({ block }: ArchiveBlockProps) => {
@@ -119,9 +209,13 @@ export const ArchiveBlock = async ({ block }: ArchiveBlockProps) => {
         let query = '';
         const limit = block.limit || 10;
         const where: any = {};
-        
+
         if (block.relationTo === 'portfolio' && block.showFeaturedOnly) {
             where['isFeatured'] = true;
+        }
+
+        if (block.relationTo === 'events') {
+            where['eventStatus'] = { not_in: ['ENUM:cancelled'] };
         }
 
         const whereClause = buildWhereClause(where);
@@ -132,22 +226,25 @@ export const ArchiveBlock = async ({ block }: ArchiveBlockProps) => {
             query = POSTS_QUERY.replace('WHERE_CLAUSE', whereClause ? whereClause : '');
         } else if (block.relationTo === 'services') {
             query = SERVICES_QUERY.replace('WHERE_CLAUSE', whereClause ? whereClause : '');
+        } else if (block.relationTo === 'events') {
+            query = EVENTS_QUERY.replace('WHERE_CLAUSE', whereClause ? whereClause : '');
         }
 
         if (query) {
             try {
                 const data: any = await graphqlRequest(query, { limit });
-                
+
                 if (block.relationTo === 'portfolio') docs = data.Portfolios?.docs || [];
                 else if (block.relationTo === 'posts') docs = data.Posts?.docs || [];
                 else if (block.relationTo === 'services') docs = data.Services?.docs || [];
-                
+                else if (block.relationTo === 'events') docs = data.Events?.docs || [];
+
             } catch (error) {
                 console.error('Error fetching archive data via GraphQL:', error);
             }
         }
     } else if (block.populateBy === 'selection' && block.selectedDocs) {
-        docs = block.selectedDocs.map((item) => item.value);
+        docs = block.selectedDocs.map((item: any) => item.value);
     }
 
     if (!docs || docs.length === 0) return null;
@@ -155,10 +252,10 @@ export const ArchiveBlock = async ({ block }: ArchiveBlockProps) => {
     // Specialize rendering for Services
     if (block.relationTo === 'services') {
         return (
-            <ServiceArchiveRenderer 
-                services={docs} 
-                heading={block.blockName} 
-                introContent={block.introContent} 
+            <ServiceArchiveRenderer
+                services={docs}
+                heading={block.blockName}
+                introContent={block.introContent}
             />
         );
     }
@@ -168,6 +265,16 @@ export const ArchiveBlock = async ({ block }: ArchiveBlockProps) => {
         return (
             <PortfolioArchiveRenderer
                 portfolios={docs}
+                blockName={block.blockName}
+                introContent={block.introContent}
+            />
+        );
+    }
+
+    if (block.relationTo === 'events') {
+        return (
+            <EventsArchiveRenderer
+                events={docs}
                 blockName={block.blockName}
                 introContent={block.introContent}
             />
@@ -209,13 +316,13 @@ export const ArchiveBlock = async ({ block }: ArchiveBlockProps) => {
                     const title = doc.title || doc.name; // Service uses name
                     const slug = doc.slug; // Assuming all use slug
                     const image = doc.heroImage || doc.meta?.image || doc.images?.[0]?.image; // Fallbacks
-                    
+
                     // Determine href based on collection (fallback to root if unknown)
                     // We might need to know the collection type of the doc if it came from selection and is mixed
                     const collection = block.relationTo || (doc.artistOrBrand ? 'portfolio' : 'posts'); // Heuristic
-                    const href = collection === 'portfolio' ? `/works/${slug}` : 
-                                 collection === 'services' ? `/services/${slug}` : 
-                                 `/blog/${slug}`;
+                    const href = collection === 'portfolio' ? `/works/${slug}` :
+                        collection === 'services' ? `/services/${slug}` :
+                            `/blog/${slug}`;
 
                     return (
                         <Link key={doc.id || index} href={href} className="group block">
@@ -236,7 +343,7 @@ export const ArchiveBlock = async ({ block }: ArchiveBlockProps) => {
                                     </div>
                                 )}
                                 {doc.categories && doc.categories.length > 0 && (
-                                     <div className="mb-1 text-xs font-semibold uppercase tracking-wider text-primary-600">
+                                    <div className="mb-1 text-xs font-semibold uppercase tracking-wider text-primary-600">
                                         {doc.categories.map((c: any) => c.title).join(', ')}
                                     </div>
                                 )}
@@ -247,21 +354,21 @@ export const ArchiveBlock = async ({ block }: ArchiveBlockProps) => {
                     );
                 })}
             </div>
-             
-             {block.link && block.link.url && (
+
+            {block.link && block.link.url && (
                 <div className="mt-12 flex justify-center">
-                    <Button 
+                    <Button
                         href={block.link.url}
                         variant={
-                            block.link.appearance === 'outline' ? 'outline' : 
-                            block.link.appearance === 'ghost' ? 'ghost' : 
-                            'primary'
+                            block.link.appearance === 'outline' ? 'outline' :
+                                block.link.appearance === 'ghost' ? 'ghost' :
+                                    'primary'
                         }
                     >
                         {block.link.label}
                     </Button>
                 </div>
-             )}
+            )}
         </SectionContainer>
     );
 };

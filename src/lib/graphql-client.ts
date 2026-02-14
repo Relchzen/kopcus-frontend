@@ -69,6 +69,27 @@ export function buildWhereClause(filters: Record<string, any>): string {
                 return `${key}: { in: [${value.map(v => `"${v}"`).join(', ')}]}`
             }
 
+            if (typeof value === 'object') {
+                const ops = Object.entries(value)
+                    .map(([op, v]) => {
+                        if (Array.isArray(v)) {
+                            const formattedValues = v.map(i => {
+                                if (typeof i === 'string' && i.startsWith('ENUM:')) {
+                                    return i.substring(5);
+                                }
+                                return `"${i}"`;
+                            });
+                            return `${op}: [${formattedValues.join(', ')}]`
+                        }
+                        if (typeof v === 'string' && v.startsWith('ENUM:')) {
+                            return `${op}: ${v.substring(5)}`;
+                        }
+                        return `${op}: ${typeof v === 'string' ? `"${v}"` : v}`
+                    })
+                    .join(', ')
+                return `${key}: { ${ops} }`
+            }
+
             return null
         })
         .filter(Boolean)
