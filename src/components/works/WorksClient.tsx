@@ -4,9 +4,10 @@ import React from 'react';
 import { motion } from 'motion/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import Masonry from 'react-masonry-css';
 import { SectionContainer } from '@/components/SectionContainer';
 import { Button } from '@/components/ui/Button';
-import { Work } from '@/lib/works';
+import { Work } from '@/lib/works-payload';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 
 interface WorksClientProps {
@@ -16,11 +17,12 @@ interface WorksClientProps {
 export function WorksClient({ works }: WorksClientProps) {
   const featuredWork = works[0];
   const remainingWorks = works.slice(1);
+  const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL
 
   return (
     <main className="min-h-screen bg-white text-neutral-900">
       {/* Simple Hero Section */}
-      <SectionContainer name="works-hero" className="pt-32 pb-16 md:pt-48 md:pb-24">
+      <SectionContainer name="works-hero" className="py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -56,7 +58,7 @@ export function WorksClient({ works }: WorksClientProps) {
             <Link href={`/works/${featuredWork.slug}`} className="group block">
               <div className="relative aspect-video w-full overflow-hidden rounded-3xl bg-neutral-100">
                 <Image
-                  src={featuredWork.coverImage || '/placeholder-work.jpg'}
+                  src={`${CMS_URL}${featuredWork.heroImage.sizes.medium.url}` || '/placeholder-work.jpg'}
                   alt={featuredWork.title}
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -65,10 +67,7 @@ export function WorksClient({ works }: WorksClientProps) {
 
                 <div className="absolute bottom-0 left-0 p-6 md:p-12 text-white w-full">
                   <div className="mb-2 md:mb-4 flex items-center gap-3 md:gap-4">
-                    <span className="rounded-full bg-white/20 px-3 py-1 text-xs md:text-sm font-medium backdrop-blur-md">
-                      {featuredWork.service}
-                    </span>
-                    <span className="text-xs md:text-sm font-medium opacity-80">{featuredWork.year}</span>
+                    <span className="text-xs md:text-sm font-medium opacity-80">{new Date(featuredWork.projectDate).getFullYear()}</span>
                   </div>
                   <h3 className="font-display text-2xl font-bold uppercase md:text-6xl lg:text-7xl leading-tight">
                     {featuredWork.title}
@@ -92,20 +91,29 @@ export function WorksClient({ works }: WorksClientProps) {
               <div className="text-neutral-500 font-medium">{remainingWorks.length} Projects</div>
             </div>
 
-            <div className="grid gap-x-8 gap-y-16 md:grid-cols-2 lg:grid-cols-3">
+            <Masonry
+              breakpointCols={{
+                default: 3,
+                1024: 2,
+                640: 1
+              }}
+              className="flex -ml-8 w-auto"
+              columnClassName="pl-8 bg-clip-padding"
+            >
               {remainingWorks.map((work) => (
                 <Link
                   key={work.id}
                   href={`/works/${work.slug}`}
-                  className="group cursor-pointer block"
+                  className="group cursor-pointer block mb-16 break-inside-avoid"
                 >
                   <div className="relative mb-6 overflow-hidden rounded-2xl bg-neutral-100">
-                    <div className="aspect-[4/5] w-full">
+                    <div className="w-full">
                       <Image
-                        src={work.coverImage || '/placeholder-work.jpg'}
+                        src={`${CMS_URL}${work.heroImage.sizes.small.url}` || '/placeholder-work.jpg'}
                         alt={work.title}
-                        fill
-                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                        width={work.heroImage.sizes.small.width}
+                        height={work.heroImage.sizes.small.height}
+                        className="w-full h-auto object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                       />
                     </div>
                     {/* Overlay on hover */}
@@ -115,9 +123,9 @@ export function WorksClient({ works }: WorksClientProps) {
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-primary-600 uppercase tracking-wider">
-                        {work.service}
+                        {work.artistOrBrand}
                       </span>
-                      <span className="text-sm text-neutral-400">{work.year}</span>
+                      <span className="text-sm text-neutral-400">{new Date(work.projectDate).getFullYear()}</span>
                     </div>
 
                     <div className="relative w-fit max-w-full overflow-hidden pb-1">
@@ -125,12 +133,10 @@ export function WorksClient({ works }: WorksClientProps) {
                         {work.title}
                       </h3>
                     </div>
-
-                    <p className="text-neutral-500">{work.client}</p>
                   </div>
                 </Link>
               ))}
-            </div>
+            </Masonry>
           </div>
         </SectionContainer>
       )}

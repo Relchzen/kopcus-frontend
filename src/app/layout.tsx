@@ -37,8 +37,8 @@ export default function RootLayout({
       lang="en"
       className={`${poppins.variable} ${montserrat.variable} ${bebasNeue.variable} bg-white`}
     >
-      <SmoothScrolling />
       <body className="flex min-h-screen justify-center">
+        <SmoothScrolling />
         <div className="container">
           <header>
             <Navbar />

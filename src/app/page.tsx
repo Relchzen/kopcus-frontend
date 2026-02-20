@@ -1,92 +1,38 @@
-import HeroSection from '@/components/sections/HeroSection';
-import EventSection from '@/components/sections/EventSection';
-import ServiceSection from '@/components/sections/ServiceSection';
-import PortfolioSection from '@/components/sections/PortfolioSection/PortfolioSection';
-import AboutSection from '@/components/sections/AboutSection';
 import ContactSection from '@/components/sections/ContactSection';
-import MobileEventSection from '@/components/sections/MobileEventSection';
-
-import { fetchStrapi } from '@/lib/strapi';
-import { fetchEvents } from '@/lib/events';
+import { PayloadPageLayout } from '@/components/payload/PayloadPageLayout';
 import { Metadata } from 'next';
+import { getHomePage } from '@/lib/payload';
 
-async function getHomeData() {
-  return fetchStrapi('/api/homepage?pLevel=5', { next: { revalidate: 3600 } });
-}
+const CMS_URL = process.env.NEXT_PUBLIC_CMS_URLS
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { data } = await getHomeData();
-  const { seo } = data;
+  const data = await getHomePage();
 
-  if (!seo) {
-      return {};
+  if (!data) {
+    return {};
   }
 
   return {
-    title: seo.metaTitle,
-    description: seo.metaDescription,
-    keywords: seo.keywords,
-    robots: {
-      index: seo.metaRobots?.includes('index'),
-      follow: seo.metaRobots?.includes('follow'),
-    },
-    alternates: {
-      canonical: seo.canonicalURL,
-    },
+    title: data.meta?.title || data.title,
+    description: data.meta?.description,
     openGraph: {
-      title: seo.metaTitle,
-      description: seo.metaDescription,
-      url: seo.canonicalURL,
-      siteName: 'Kopi Chuseyo',
-      locale: 'en_US',
-      type: 'website',
-      images: [
-        {
-          url: seo.structuredData?.logo || '/logo.png',
-          width: 1200,
-          height: 630,
-          alt: seo.metaTitle,
-        }
-      ]
-    },
-    icons: {
-      icon: '/logo.png',
-      shortcut: '/logo.png',
-      apple: '/logo.png',
+      title: data.meta?.title || data.title,
+      description: data.meta?.description,
+      images: `${CMS_URL}${data.meta?.image?.sizes?.small?.url}`,
+      type: 'article',
+      publishedTime: data.publishedAt,
     },
   };
 }
 
 export default async function Home() {
-  const [data, events] = await Promise.all([
-    getHomeData(),
-    fetchEvents()
-  ]);
-
-  const {
-    HeroSection: heroData,
-    AboutSection: aboutData,
-    PortfolioSection: portfolioData,
-    ServiceSection: serviceData,
-    seo
-  } = data.data;
+  const data = await getHomePage()
+  console.log("home page data", data)
 
   return (
     <>
-      {seo?.structuredData && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(seo.structuredData) }}
-        />
-      )}
       <main className='pt-12'>
-        <HeroSection data={heroData} />
-        <EventSection events={events} />
-        <MobileEventSection events={events} />
-        <AboutSection data={aboutData} />
-        <PortfolioSection data={portfolioData} />
-        <ServiceSection data={serviceData} />
-        {/* <TestimonialSection /> */}
+        {data.layout && <PayloadPageLayout blocks={data.layout} />}
         <ContactSection />
       </main>
     </>

@@ -15,9 +15,10 @@ import Link from 'next/link';
 
 type Props = {
   events: Event[];
+  title?: string;
 };
 
-export default function MobileEventSection({ events }: Props) {
+export default function MobileEventSection({ events, title = "Events" }: Props) {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const outerRef = useRef<HTMLDivElement | null>(null);
   const innerRef = useRef<HTMLDivElement | null>(null);
@@ -134,7 +135,7 @@ export default function MobileEventSection({ events }: Props) {
 
   const handleInfiniteLoop = (snappedIndex: number) => {
     if (!isInfinite) return;
-    
+
     const outer = outerRef.current;
     const inner = innerRef.current;
     if (!outer || !inner) return;
@@ -175,7 +176,7 @@ export default function MobileEventSection({ events }: Props) {
       className="relative mt-12 flex flex-col items-center gap-6 md:hidden"
     >
       {/* === Heading === */}
-      <SectionHeading sectionName="Events" id="event-heading" />
+      <SectionHeading sectionName={title} id="event-heading" />
       {/* === Event Banner === */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -213,7 +214,7 @@ export default function MobileEventSection({ events }: Props) {
           // Actually, if 1 item, we might not need drag at all.
           // Let's use left/right constraints based on content width if not infinite.
           // For single item, it's centered.
-          
+
           dragElastic={0.05}
           style={{ x }}
           whileTap={{ cursor: 'grabbing' }}
@@ -250,8 +251,12 @@ export default function MobileEventSection({ events }: Props) {
 
       {/* === Event Details === */}
       <div className="mt-2 flex flex-col gap-2 px-6 text-center text-black">
-        <p className="text-2xl font-bold">{events[selectedIndex].artist}</p>
-        <h3 className="text-xl font-semibold">{events[selectedIndex].title}</h3>
+        {events[selectedIndex].artist && (
+          <p className="text-2xl font-bold">{events[selectedIndex].artist}</p>
+        )}
+        <h3 className={`${events[selectedIndex].artist ? 'text-xl font-semibold' : 'text-2xl font-bold'}`}>
+          {events[selectedIndex].title}
+        </h3>
         <p className="text-sm text-black/80">
           {events[selectedIndex].location} — {new Date(events[selectedIndex].startAt).toLocaleDateString()}
         </p>
