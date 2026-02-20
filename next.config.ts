@@ -21,7 +21,6 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'cms.kopichuseyo.com',
         port: '',
-        pathname: '/uploads/**',
       },
       {
         protocol: 'https',

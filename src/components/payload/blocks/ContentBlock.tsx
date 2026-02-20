@@ -1,6 +1,5 @@
-import React, {JSX} from 'react';
+import { JSX } from 'react';
 import NextImage from 'next/image';
-import Link from 'next/link';
 import { SectionContainer } from '@/components/SectionContainer';
 import { Button } from '@/components/ui/Button';
 import { SectionHeading } from '@/components/ui/SectionHeading';
@@ -56,23 +55,23 @@ const RichText = ({ content }: { content: any }) => {
             case 'upload':
                 const imageUrl = getImageUrl(node);
                 if (!imageUrl) return null;
-                
+
                 const width = node.value?.width || 800;
                 const height = node.value?.height || 600;
-                
+
                 return (
                     <div key={index} className="my-2 overflow-hidden rounded-2xl bg-neutral-100">
-                         <NextImage
+                        <NextImage
                             src={imageUrl}
                             alt={node.value?.alt || node.value?.filename || 'Image'}
                             width={width}
                             height={height}
                             className="h-auto w-full object-cover"
-                         />
+                        />
                     </div>
                 );
             default:
-                 if (node.children) {
+                if (node.children) {
                     return <div key={index}>{node.children.map((child: any, i: number) => renderNode(child, i))}</div>;
                 }
                 return null;
@@ -103,37 +102,38 @@ export const ContentBlock = ({ block }: { block: any }) => {
     const firstRichTextIndex = block.columns.findIndex((col: any) => col.richText && col.richText.root && col.richText.root.children && col.richText.root.children.length > 0);
 
     return (
-        <SectionContainer name={block.blockName} className="py-20 section-padding"> {/* Standard padding */}
+        <SectionContainer name={block.blockName} className="py-20 container section-padding"> {/* Standard padding */}
             <div className="grid grid-cols-12 gap-x-8 gap-y-6">
                 {block.columns.map((col: any, index: number) => {
                     return (
-                    <div key={col.id || index} className={`${getColumnWidth(col.size)} flex flex-col justify-center`}>
-                        {index === firstRichTextIndex && block.blockName && (
-                            <SectionHeading
-                                sectionName={block.blockName}
-                                id={block.blockName?.toLowerCase().replace(/\s+/g, '-') || 'section-heading'}
-                                className="mb-6"
-                            />
-                        )}
-                        {col.richText && <RichText content={col.richText} />}
-                        
-                        {col.enableLink && col.link && (
-                            <div className="mt-4">
-                                    <Button 
+                        <div key={col.id || index} className={`${getColumnWidth(col.size)} flex flex-col justify-center`}>
+                            {index === firstRichTextIndex && block.blockName && (
+                                <SectionHeading
+                                    sectionName={block.blockName}
+                                    id={block.blockName?.toLowerCase().replace(/\s+/g, '-') || 'section-heading'}
+                                    className="mb-6"
+                                />
+                            )}
+                            {col.richText && <RichText content={col.richText} />}
+
+                            {col.enableLink && col.link && (
+                                <div className="mt-4">
+                                    <Button
                                         size={'sm'}
-                                    href={col.link.url} 
-                                    variant={
-                                        col.link.appearance === 'outline' ? 'outline' : 
-                                        col.link.appearance === 'ghost' ? 'ghost' : 
-                                        'primary'
-                                    }
-                                >
-                                    {col.link.label}
-                                </Button>
-                            </div>
-                        )}
-                    </div>
-                )})}
+                                        href={col.link.url}
+                                        variant={
+                                            col.link.appearance === 'outline' ? 'outline' :
+                                                col.link.appearance === 'ghost' ? 'ghost' :
+                                                    'primary'
+                                        }
+                                    >
+                                        {col.link.label}
+                                    </Button>
+                                </div>
+                            )}
+                        </div>
+                    )
+                })}
             </div>
         </SectionContainer>
     );

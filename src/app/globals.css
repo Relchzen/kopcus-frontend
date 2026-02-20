@@ -34,7 +34,8 @@
   --color-secondary-dark: #102629;
 
   /* Neutral */
-  --color-neutral-100: #f2f0ef; /* Base white tone */
+  --color-neutral-100: #f2f0ef;
+  /* Base white tone */
   --color-neutral-150: #eae7e6;
   --color-neutral-200: #e1dedc;
   --color-neutral-300: #d3cfcd;
@@ -85,7 +86,7 @@ h6 {
 
 /* HIDE RECAPTCHA BADGE*/
 .grecaptcha-badge {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 /* :root {
@@ -118,6 +119,8 @@ body {
 }
 
 .scrollbar-hide {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }

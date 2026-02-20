@@ -1,5 +1,6 @@
 import ContactSection from '@/components/sections/ContactSection';
 import { PayloadPageLayout } from '@/components/payload/PayloadPageLayout';
+import { Hero } from '@/components/payload/hero';
 import { Metadata } from 'next';
 import { getHomePage } from '@/lib/payload';
 
@@ -27,11 +28,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Home() {
   const data = await getHomePage()
-  console.log("home page data", data)
 
   return (
     <>
       <main className='pt-12'>
+        {data.hero && <Hero hero={data.hero} />}
         {data.layout && <PayloadPageLayout blocks={data.layout} />}
         <ContactSection />
       </main>

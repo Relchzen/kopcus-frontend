@@ -226,8 +226,8 @@ export default function EventSection({ events, title = "Events" }: Props) {
                 key={event.id}
                 onClick={() => setSelectedIndex(index)}
                 className={`group relative aspect-[3/4] w-60 flex-shrink-0 cursor-pointer snap-start overflow-hidden rounded-xl border transition-all duration-500 ${index === selectedIndex
-                    ? 'border-primary-500 scale-100 shadow-[0_0_40px_rgba(var(--primary-500-rgb),0.4)] z-10'
-                    : 'border-white/5 scale-95 opacity-50 hover:opacity-80 hover:scale-95 grayscale hover:grayscale-0'
+                  ? 'border-primary-500 scale-100 shadow-[0_0_40px_rgba(var(--primary-500-rgb),0.4)] z-10'
+                  : 'border-white/5 scale-95 opacity-50 hover:opacity-80 hover:scale-95 grayscale hover:grayscale-0'
                   }`}
               >
                 <div
@@ -239,7 +239,7 @@ export default function EventSection({ events, title = "Events" }: Props) {
                 <div className="absolute bottom-0 left-0 w-full p-5 transform transition-transform duration-300 group-hover:translate-y-0 translate-y-2">
                   <p className="truncate text-lg font-bold text-white mb-1">{event.title}</p>
                   <div className="flex items-center gap-2 text-xs text-primary-400 font-medium uppercase tracking-wider">
-                    <span>{new Date(event.startAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
+                    <span>{new Date(event.startAt).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' })}</span>
                     <span className="h-1 w-1 rounded-full bg-primary-500"></span>
                     <span>{event.location.split(',')[0]}</span>
                   </div>
